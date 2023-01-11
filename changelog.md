@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Calculate `L` in `cpw.characteristics`.
 
+### Changed
+
+- Do not return `Cvac` in `cpw.characteristics`.
+
 ## v0.1.0 - 2023-01-11
 
 ### Added
