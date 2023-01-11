@@ -111,7 +111,7 @@ For a lossless CPW (:math:`G = 0` and :math:`R = 0` in the transmission line mod
 
 .. math::
 
-   U \propto I \propto \exp(\mathrm{i} (\omega t - \gamma x))
+   U \propto I \propto \exp(\mathrm{i} \omega t - \gamma x)
    \quad\text{where}\quad
    \gamma = \mathrm i \omega \sqrt{L C} .
 
