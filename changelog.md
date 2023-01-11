@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 
 - Do not return `Cvac` in `cpw.characteristics`.
+- Small theory fixes.
 
 ## v0.1.0 - 2023-01-11
 

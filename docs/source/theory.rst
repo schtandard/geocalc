@@ -119,7 +119,7 @@ It can be shown that the phase velocity in the transmission line is given by
 
 .. math::
 
-   v_{\mathrm{ph}} = \frac{\omega}{\operatorname{Im}(\gamma)} = \frac{1}{\sqrt{L C}} = \frac{c}{\sqrt{\varepsilon_{\mathrm{eff}}}}
+   v_{\mathrm{ph}} = \frac{\mathrm i \omega}{\gamma} = \frac{1}{\sqrt{L C}} = \frac{c}{\sqrt{\varepsilon_{\mathrm{eff}}}}
 
 allowing us to calculate the line's characteristic impedance via
 
