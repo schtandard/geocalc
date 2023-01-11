@@ -107,6 +107,8 @@ More details on these calculations can be found in Simons (2001) and Garg et al.
 
 Further Parameters
 ==================
+Lossless CPWs
+-------------
 For a lossless CPW (:math:`G = 0` and :math:`R = 0` in the transmission line model) one finds wave solutions with
 
 .. math::
@@ -133,6 +135,58 @@ Finally, we can calculate :math:`L` if desired:
 .. math::
 
    L = C Z_0^2 = \frac{1}{C v_{\mathrm{ph}}^2}
+
+Conductor Losses
+----------------
+Consider small conductor losses in the transmission line, i.e.
+
+.. math::
+
+   G = 0
+   \qquad,\qquad
+   R > 0
+   \qquad,\qquad
+   \frac{R}{\omega L} \ll 1 .
+
+Then the expressions above change as follows (in first order approximation):
+
+.. math::
+
+   \gamma
+   &= \sqrt{(R + \mathrm i \omega L) \cdot \mathrm i \omega C}
+   = \mathrm i \omega \sqrt{L C} \sqrt{1 - \mathrm i \frac{R}{\omega L}} \\
+   &\approx \mathrm i \omega \sqrt{L C} \Bigl( 1 - \mathrm i \frac{R}{2 \omega L} \Bigr)
+   = \mathrm i \omega \sqrt{L C} + \frac R2 \sqrt{\frac CL} \\[1ex]
+   v_{\mathrm{ph}}
+   &= \frac{\omega}{\operatorname{Im}(\gamma)}
+   \approx \frac{1}{\sqrt{L C}}
+   = \frac{c}{\sqrt{\varepsilon_{\mathrm{eff}}}} \\[1ex]
+   Z_0
+   &= \sqrt{\frac{R + \mathrm i \omega L}{\mathrm i \omega C}}
+   = \frac{\gamma}{\mathrm i \omega C}
+   \approx \sqrt{\frac LC} \Bigl( 1 - \mathrm i \frac{R}{2 \omega L} \Bigr)
+   = \sqrt{\frac LC} - \mathrm i \frac{R}{2 \omega \sqrt{L C}} \\[1ex]
+   \operatorname{Re}(Z_0)
+   &= \frac{\operatorname{Im}(\gamma)}{\omega C}
+   = \frac{1}{C v_{\mathrm{ph}}}
+   \approx \sqrt{\frac LC}
+   = \frac{\sqrt{\varepsilon_{\mathrm{eff}}}}{C c}
+
+Thus, all of the expressions from the lossless case retain their validity within this approximation, except the the imaginary part of :math:`Z_0` is neglected.
+
+Dielectric Losses
+-----------------
+Similarly to the previous case, the expressions from the lossless case retain there validity in first order approximation, given
+
+.. math::
+
+   G > 0
+   \qquad,\qquad
+   R = 0
+   \qquad,\qquad
+   \frac{G}{\omega C} \ll 1 .
+
+In this case, :math:`\gamma` can be obtained exactly by calculating :math:`v_{\mathrm{ph}} = c / \sqrt{\varepsilon_{\mathrm{eff}}}` with an appropriate imaginary component in :math:`\varepsilon_{\mathrm{eff}}`.
 
 ------------------------------
 Inderdigital Capacitors (IDCs)
