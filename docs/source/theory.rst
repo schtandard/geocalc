@@ -160,7 +160,7 @@ where
 
 .. math::
 
-   t_2 = \operatorname{sn}(K(k^2) \, \eta, k)
+   t_2 = \operatorname{sn}(K(k^2) \, \eta, k^2)
    \quad,\quad
    t_4 = \frac{1}{k}
    \quad,\quad
@@ -169,6 +169,7 @@ where
    q = \exp\Bigl(- \frac{4 \pi h}{\lambda}\Bigr)
 
 with the elliptic sine (Jacobi elliptic function *sinus amplitudinis*) :math:`\operatorname{sn}` and the Jacobi theta functions :math:`\vartheta_i`.
+As for :math:`K` we use the :math:`m`-convention for :math:`\operatorname{sn}`, as does :func:`scipy.special.ellipj`, whereas Igreja (2004) uses the :math:`k`-convention.
 
 For exterior electrodes one finds
 
