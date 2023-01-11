@@ -1,0 +1,37 @@
+"""A Python 3 package for calculating physical parameters for device geometries."""
+
+from typing import Iterable
+from . import cpw, idc
+
+__all__ = [
+    'stack_layers',
+    'cpw',
+    'idc',
+]
+
+def stack_layers(*layers: Iterable[tuple], start_stack: Iterable[tuple] = None) -> list[tuple]:
+    """Stack a number of layers.
+
+    This just shifts the termination coordinate of each layer by the heights
+    of previous layers.
+
+    Arguments:
+        layers: The layers to stack.
+            Each layer should be given as a tuple whose first value represents
+            its termination coordinate (i.e. its height).
+        start_stack: A stack to put at the bottom of the stack unchanged.
+
+    Returns:
+        The stacked layers.
+
+    """
+    if start_stack is None:
+        abs_layers = []
+        height = 0
+    else:
+        abs_layers = list(start_stack)
+        height = abs_layers[-1][0]
+    for l in layers:
+        height += l[0]
+        abs_layers.append((height, *l[1:]))
+    return abs_layers
