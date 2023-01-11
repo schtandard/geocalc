@@ -10,8 +10,8 @@ Calculating Capacitances Using Confomal Mappings
 The general idea of conformal mappings is to transform geometries in which the field equations cannot easily be solved into ones where the solution is trivial using appropriate coordinate transformations.
 Let us first broadly discuss this useful approach before moving on to the particular device geometries.
 
-----
-
+Field Volumes
+=============
 We consider a planar geometry of conductors that is (practically) invariant in one dimension.
 By that we mean that its extent in that direction is so large that we can consider it to be infinite for the purposes of our calculations.
 We will then use conformal mapping techniques to calculate the specific capacitance of the geometry (i.e. the capacitance per length in the invariant direction).
@@ -48,8 +48,8 @@ With this we can calculate the total specific capacitance of the geometry as the
 
    C = \varepsilon_0 \, \Bigl( \sum_{k = 0}^{n^{\mathrm u}} v^{\mathrm u}_k \, \varepsilon^{\mathrm u}_k + \sum_{k = 0}^{n^{\mathrm l}} v^{\mathrm l}_k \, \varepsilon^{\mathrm l}_k \Bigr) \text{.}
 
-----
-
+Filling Factors and Effective Permittivity
+==========================================
 For further considerations (like determining the propagation velocity in a transmission line) the effective permittivity of the system can be useful.
 Each dielectric contributes to it according to a filling factor:
 
@@ -73,6 +73,8 @@ Using its vield volume, the filling factor of any of our dielectric layers is gi
 --------------------------
 Coplanar Waveguides (CPWs)
 --------------------------
+Calculating the Field Volumes
+=============================
 For a coplanar waveguide described by the parameters :math:`a` and :math:`b` the field volume of a dielectric layer extending from the CPW (height :math:`0`) up to the height :math:`h` is given by
 
 .. math::
@@ -101,26 +103,42 @@ Note that
 
 in both cases.
 
-----
+More details on these calculations can be found in Simons (2001) and Garg et al. (2013).
 
-From the effective permittivity of the CPW we can calculate its phase velocity and (the real part of) the characteristic impedance :math:`Z_0`
+Further Parameters
+==================
+For a lossless CPW (:math:`G = 0` and :math:`R = 0` in the transmission line model) one finds wave solutions with
 
 .. math::
 
-   v_{\mathrm{ph}} = \frac{c}{\sqrt{\varepsilon_{\mathrm{eff}}}}
-   \qquad,\qquad
-   \operatorname{Re}(Z_0) = \frac{1}{C \, v_{\mathrm{ph}}} = \frac{\sqrt{\varepsilon_{\mathrm{eff}}}}{C \, c}
+   U \propto I \propto \exp(\mathrm{i} (\omega t - \gamma x))
+   \quad\text{where}\quad
+   \gamma = \mathrm i \omega \sqrt{L C} .
+
+It can be shown that the phase velocity in the transmission line is given by
+
+.. math::
+
+   v_{\mathrm{ph}} = \frac{\omega}{\operatorname{Im}(\gamma)} = \frac{1}{\sqrt{L C}} = \frac{c}{\sqrt{\varepsilon_{\mathrm{eff}}}}
+
+allowing us to calculate the line's characteristic impedance via
+
+.. math::
+
+   Z_0 = \sqrt{\frac{L}{C}} = \frac{\gamma}{\mathrm i \omega C} = \frac{1}{C v_{\mathrm{ph}}} = \frac{\sqrt{\varepsilon_{\mathrm{eff}}}}{C c}
 
 where :math:`c` is the speed of light in vacuum.
-For a lossless CPW :math:`Z_0 = \operatorname{Re}(Z_0)`.
+Finally, we can calculate :math:`L` if desired:
 
-----
+.. math::
 
-Detailed discussions of these calculations can be found in Simons (2001) and Garg et al. (2013).
+   L = C Z_0^2 = \frac{1}{C v_{\mathrm{ph}}^2}
 
 ------------------------------
 Inderdigital Capacitors (IDCs)
 ------------------------------
+The Approach
+============
 For an interdigital capacitor described by the parameters :math:`n`, :math:`\eta` and :math:`\lambda` we calculate the contributions :math:`C_{\mathrm i}` of the a between two interior electrodes and :math:`C_{\mathrm e}` of a gap next to an exterior electrode separately.
 The total specific capacitance is then given by
 
@@ -130,14 +148,12 @@ The total specific capacitance is then given by
 
 and the absolute capacitance is obtained as :math:`C_{\mathrm{abs}} = l \cdot C` with the IDC finger length :math:`l`.
 
-----
-
 While it is possible to calculate the capacitance for IDC structures with a metal cover using conformal mapping techniques similar to those used for CPW structures, Igreja (2004) does not do this and it is thus not included in this package.
 The following expressions are thus only valid for dielectric layers *without* a metal cover.
 In practice, this will hardly be of relevance, as the distance of a metal cover to the IDC will be much larger than the gap between the fingers (or even the IDC size), making its effects negligible.
 
-----
-
+Calculating the Field Volumes
+=============================
 The field volume of a dielectric layer extending from the CPW (height :math:`0`) up to the height :math:`h` corresponding to one of those gaps is given by
 
 .. math::
@@ -187,12 +203,10 @@ where
    \quad,\quad
    t_4 = \cosh\Bigl( \frac{\pi (1 + \eta) \lambda}{8 h} \Bigr) .
 
-----
-
-A detailed discussion of these calculations can be found in Igreja (2004).
+More details on these calculations can be found in Igreja (2004).
 
 ----------
-Literature
+References
 ----------
 - Garg, R., Bahl, I., & Bozzi, M. (2013) *Microstrip Lines and Slotlines* (3rd ed.). Artech House.
 - Igreja, R., Dias, C. J. (2004) Analytical evaluation of the interdigital electrodes capacitance for a multi-layered structure. *Sensors and Actuators A: Physical 112*, 291--301.
