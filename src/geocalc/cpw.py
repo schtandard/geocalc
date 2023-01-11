@@ -230,14 +230,16 @@ def characteristics(a: ArrayLike, b: ArrayLike,
             (In the same format as `layers_beneath`.)
 
     Returns:
-        A dict of characteristic values comprising `Z0`, `v_ph`, `eps_eff`, `C` and `Cvac`
+        A dict of characteristic values comprising `Z0`, `v_ph`, `eps_eff`,
+        `C`, `Cvac` and `L`.
 
     """
     C, Cvac = _capacitance(a, b, layers_beneath, layers_above)
     eps_eff = C / Cvac
     v_ph = c_vac / np.sqrt(eps_eff)
     Z0 = 1 / (C * v_ph)
-    return {'Z0': Z0, 'v_ph': v_ph, 'eps_eff': eps_eff, 'C': C, 'Cvac': Cvac}
+    L = 1 / (v_ph**2 * C)
+    return {'Z0': Z0, 'v_ph': v_ph, 'eps_eff': eps_eff, 'C': C, 'Cvac': Cvac, 'L': L}
 
 def impedance(a: ArrayLike, b: ArrayLike,
               layers_beneath: Optional[Iterable[tuple]] = [(np.inf, 1)],
