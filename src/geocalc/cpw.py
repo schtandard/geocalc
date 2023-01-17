@@ -20,7 +20,7 @@ The meanings of the geometry parameter names are shown in this drawing::
                                             ├── W ──┤
                             ├──────── D ────────┤
 
-The Parameters `c` and `X` are currrently not considered by and of the functions.
+The Parameters `c`, `X` and `t` are currrently not considered by any of the functions.
 
 """
 
