@@ -3,7 +3,7 @@
 The functions in this module accept floats or numpy arrays of equal shape for
 geometry parameters and return an object (or objects) of the same type and shape.
 
-The meanings of the geometry parameter names are shown in this drawing::
+The meanings of the geometry parameter names are shown in this drawing (crossection view)::
 
                                       ├─ a ─┤
                                       ├───── b ─────┤
