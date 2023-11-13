@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Small documentation improvements.
 
+### Fixed
+
+- Add missing dependency `mpmath`.
+
 ## v0.1.1 - 2023-01-11
 
 ### Added
