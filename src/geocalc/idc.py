@@ -30,6 +30,7 @@ import mpmath
 jtheta = np.vectorize(mpmath.jtheta, otypes=['float64'], excluded={0, 1})
 from typing import Union, Optional, Iterable, Callable
 from numpy.typing import ArrayLike
+from ._util import LayerSpec, _layerspec
 
 __all__ = ['wg2etalmbd', 'etalmbd2wg',
            'capacitance']
@@ -133,8 +134,8 @@ def _capacitance_aux(eta: ArrayLike, lmbd: ArrayLike, h: ArrayLike, eps_r: Array
     return Ci, Ce
 
 def capacitance(n: ArrayLike, w: ArrayLike, g: ArrayLike, l: ArrayLike = 1,
-                layers_beneath: Optional[Iterable[tuple]] = [(np.inf, 1)],
-                layers_above: Optional[Iterable[tuple]] = [(np.inf, 1)]) -> Union[float, np.array]:
+                layers_beneath: LayerSpec = None,
+                layers_above: LayerSpec = None) -> Union[float, np.array]:
     """Compute the capacitance.
 
     You can use :func:`.stack_layers` to create values for `layers_beneath`
@@ -173,8 +174,8 @@ def capacitance(n: ArrayLike, w: ArrayLike, g: ArrayLike, l: ArrayLike = 1,
     eta, lmbd = wg2etalmbd(np.array(w), np.array(g))
     l = np.array(l)
     # Now do the calculation.
-    lower_Ci, lower_Ce = _capacitance_aux(eta, lmbd, *zip(*layers_beneath))
-    upper_Ci, upper_Ce = _capacitance_aux(eta, lmbd, *zip(*layers_above))
+    lower_Ci, lower_Ce = _capacitance_aux(eta, lmbd, *zip(*_layerspec(layers_beneath)))
+    upper_Ci, upper_Ce = _capacitance_aux(eta, lmbd, *zip(*_layerspec(layers_above)))
     Ci = lower_Ci + upper_Ci
     Ce = lower_Ce + upper_Ce
     C = (n - 3) / 2 * Ci + 2 * (Ci * Ce) / (Ci + Ce)

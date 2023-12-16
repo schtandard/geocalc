@@ -30,6 +30,7 @@ from scipy.special import ellipk
 from scipy.constants import epsilon_0 as eps_0, c as c_vac
 from typing import Union, Optional, Literal, Iterable
 from numpy.typing import ArrayLike
+from ._util import LayerSpec, _layerspec
 
 __all__ = ['ab2SW', 'SW2ab', 'DW2ab', 'dW2ab',
            'capacitance', 'impedance', 'characteristics']
@@ -167,17 +168,17 @@ def _capacitance_aux(a: ArrayLike, b: ArrayLike, h: ArrayLike, eps_r: ArrayLike)
     return C.reshape(np.shape(a)), Cvac_tot.reshape(np.shape(a))
 
 def _capacitance(a: ArrayLike, b: ArrayLike,
-                 layers_beneath: Optional[Iterable[tuple]] = [(np.inf, 1)],
-                 layers_above: Optional[Iterable[tuple]] = [(np.inf, 1)]) -> Union[float, np.array]:
-    lower_C, lower_Cvac = _capacitance_aux(a, b, *zip(*layers_beneath))
-    upper_C, upper_Cvac = _capacitance_aux(a, b, *zip(*layers_above))
+                 layers_beneath: LayerSpec = None,
+                 layers_above: LayerSpec = None) -> Union[float, np.array]:
+    lower_C, lower_Cvac = _capacitance_aux(a, b, *zip(*_layerspec(layers_beneath)))
+    upper_C, upper_Cvac = _capacitance_aux(a, b, *zip(*_layerspec(layers_above)))
     C = lower_C + upper_C
     Cvac = lower_Cvac + upper_Cvac
     return C, Cvac
 
 def capacitance(a: ArrayLike, b: ArrayLike,
-                layers_beneath: Optional[Iterable[tuple]] = [(np.inf, 1)],
-                layers_above: Optional[Iterable[tuple]] = [(np.inf, 1)]) -> Union[float, np.array]:
+                layers_beneath: LayerSpec = None,
+                layers_above: LayerSpec = None) -> Union[float, np.array]:
     """Compute the specific capacitance.
 
     You can use :func:`.stack_layers` to create values for `layers_beneath`
@@ -206,8 +207,8 @@ def capacitance(a: ArrayLike, b: ArrayLike,
     return _capacitance(a, b, layers_beneath, layers_above)[0]
 
 def characteristics(a: ArrayLike, b: ArrayLike,
-                    layers_beneath: Optional[Iterable[tuple]] = [(np.inf, 1)],
-                    layers_above: Optional[Iterable[tuple]] = [(np.inf, 1)]) -> dict:
+                    layers_beneath: LayerSpec = None,
+                    layers_above: LayerSpec = None) -> dict:
     """Compute characteristic values.
 
     You can use :func:`.stack_layers` to create values for `layers_beneath`
@@ -242,8 +243,8 @@ def characteristics(a: ArrayLike, b: ArrayLike,
     return {'Z0': Z0, 'v_ph': v_ph, 'eps_eff': eps_eff, 'C': C, 'L': L}
 
 def impedance(a: ArrayLike, b: ArrayLike,
-              layers_beneath: Optional[Iterable[tuple]] = [(np.inf, 1)],
-              layers_above: Optional[Iterable[tuple]] = [(np.inf, 1)]) -> tuple[Union[float, np.array]]:
+              layers_beneath: LayerSpec = None,
+              layers_above: LayerSpec = None) -> tuple[Union[float, np.array]]:
     """Compute the characteristic impedance.
 
     You can use :func:`.stack_layers` to create values for `layers_beneath`
