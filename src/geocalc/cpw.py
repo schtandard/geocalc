@@ -51,7 +51,7 @@ def dW2ab(d, W):
     """Calculate `a` and `b` from `d` and `W`."""
     return d - W / 2, d + W / 2
 
-def _m_general(hyp_fun: Literal[np.sinh, np.tanh], a: ArrayLike, b: ArrayLike, h: ArrayLike) -> np.array:
+def _m_general(hyp_fun: np.ufunc, a: ArrayLike, b: ArrayLike, h: ArrayLike) -> np.array:
     """Calculate a certain :math:`m(h)`.
 
     The calculation is
