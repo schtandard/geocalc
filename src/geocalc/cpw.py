@@ -52,7 +52,7 @@ def dW2ab(d, W):
     return d - W / 2, d + W / 2
 
 def _m_general(hyp_fun: np.ufunc, a: ArrayLike, b: ArrayLike, h: ArrayLike) -> np.array:
-    """Calculate a certain :math:`m(h)`.
+    r"""Calculate a certain :math:`m(h)`.
 
     The calculation is
 
@@ -84,7 +84,7 @@ def _m_general(hyp_fun: np.ufunc, a: ArrayLike, b: ArrayLike, h: ArrayLike) -> n
                      out=fallback_hh) ** 2
 
 def m_interface(a: ArrayLike, b: ArrayLike, h: ArrayLike) -> np.array:
-    """Calculate :math:`m(h)` for dielectric interfaces.
+    r"""Calculate :math:`m(h)` for dielectric interfaces.
 
     The calculation is
 
@@ -103,7 +103,7 @@ def m_interface(a: ArrayLike, b: ArrayLike, h: ArrayLike) -> np.array:
     return _m_general(np.sinh, a, b, h)
 
 def m_cover(a: ArrayLike, b: ArrayLike, h: ArrayLike) -> np.array:
-    """Calculate :math:`m(h)` for metal covers.
+    r"""Calculate :math:`m(h)` for metal covers.
 
     The calculation is
 
