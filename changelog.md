@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 
 - Layer specifications may now also be scalars or `None`.
+- Renamed every occurence of "beneath" to the more natural "below".
 
 ## v0.1.2 - 2023-11-13
 

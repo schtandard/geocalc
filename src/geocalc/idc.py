@@ -134,11 +134,11 @@ def _capacitance_aux(eta: ArrayLike, lmbd: ArrayLike, h: ArrayLike, eps_r: Array
     return Ci, Ce
 
 def capacitance(n: ArrayLike, w: ArrayLike, g: ArrayLike, l: ArrayLike = 1,
-                layers_beneath: LayerSpec = None,
+                layers_below: LayerSpec = None,
                 layers_above: LayerSpec = None) -> Union[float, np.array]:
     """Compute the capacitance.
 
-    You can use :func:`.stack_layers` to create values for `layers_beneath`
+    You can use :func:`.stack_layers` to create values for `layers_below`
     and `layers_above`.
 
     First the specific capacitance is calculated, then it is multiplied by `l`
@@ -157,13 +157,13 @@ def capacitance(n: ArrayLike, w: ArrayLike, g: ArrayLike, l: ArrayLike = 1,
         g: Width of each gap between fingers.
         l: Length of the overlap of the fingers.
             Must be given in m.
-        layers_beneath: The dielectric layers beneath the IDC.
+        layers_below: The dielectric layers below the IDC.
             Each layer should be given as a tuple containing the height at which
             the layer ends and the relative permittivity of that layer. The last
             layer is considered to be terminated by a metal cover. The default
             corresponds to infinite vacuum.
         layers_above: The dielectric layers above the IDC.
-            (In the same format as `layers_beneath`.)
+            (In the same format as `layers_below`.)
 
     Returns:
         The IDC's capacitance in the same shape as `n`, `w`, `g` and `l`.
@@ -174,7 +174,7 @@ def capacitance(n: ArrayLike, w: ArrayLike, g: ArrayLike, l: ArrayLike = 1,
     eta, lmbd = wg2etalmbd(np.array(w), np.array(g))
     l = np.array(l)
     # Now do the calculation.
-    lower_Ci, lower_Ce = _capacitance_aux(eta, lmbd, *zip(*_layerspec(layers_beneath)))
+    lower_Ci, lower_Ce = _capacitance_aux(eta, lmbd, *zip(*_layerspec(layers_below)))
     upper_Ci, upper_Ce = _capacitance_aux(eta, lmbd, *zip(*_layerspec(layers_above)))
     Ci = lower_Ci + upper_Ci
     Ce = lower_Ce + upper_Ce
