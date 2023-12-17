@@ -1,6 +1,5 @@
 """A Python 3 package for calculating physical parameters for device geometries."""
 
-from typing import Iterable
 from . import cpw, idc
 from ._util import stack_layers
 

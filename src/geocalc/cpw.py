@@ -28,7 +28,7 @@ from __future__ import annotations
 import numpy as np
 from scipy.special import ellipk
 from scipy.constants import epsilon_0 as eps_0, c as c_vac
-from typing import Union, Optional, Literal, Iterable
+from typing import Union
 from numpy.typing import ArrayLike
 from ._util import LayerSpec, _layerspec
 

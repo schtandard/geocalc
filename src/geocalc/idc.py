@@ -28,7 +28,7 @@ from scipy.special import ellipk, ellipj
 from scipy.constants import epsilon_0 as eps_0
 import mpmath
 jtheta = np.vectorize(mpmath.jtheta, otypes=['float64'], excluded={0, 1})
-from typing import Union, Optional, Iterable, Callable
+from typing import Union
 from numpy.typing import ArrayLike
 from ._util import LayerSpec, _layerspec
 
