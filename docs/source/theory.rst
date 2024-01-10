@@ -17,7 +17,7 @@ By that we mean that its extent in that direction is so large that we can consid
 We will then use conformal mapping techniques to calculate the specific capacitance of the geometry (i.e. the capacitance per length in the invariant direction).
 For a geometry of finite length (that is still large enough for the approximation to hold), we can the obtain its absolute capacitance by multiplying its specific capacitance with its length.
 
-Above and beneach the conductor layer, there may be an arbitrary number of dielectric layers as well as a metal cover above the upper-most and below the lower-most dielectric.
+Above and below the conductor layer, there may be an arbitrary number of dielectric layers as well as a metal cover above the upper-most and below the lower-most dielectric.
 Let us only consider the upper half of this system for now; the calculations for the lower half are analogous.
 Let :math:`n` be the number of dielectric layers above the conductors, :math:`\varepsilon_k` the relative permittivity of the :math:`k`-th dielectric and :math:`h_k` the :math:`z`-coordinate of its upper edge::
 
@@ -172,11 +172,11 @@ Then the expressions above change as follows (in first order approximation):
    \approx \sqrt{\frac LC}
    = \frac{\sqrt{\varepsilon_{\mathrm{eff}}}}{C c}
 
-Thus, all of the expressions from the lossless case retain their validity within this approximation, except the the imaginary part of :math:`Z_0` is neglected.
+Thus, all of the expressions from the lossless case retain their validity within this approximation, except that the imaginary part of :math:`Z_0` is neglected.
 
 Dielectric Losses
 -----------------
-Similarly to the previous case, the expressions from the lossless case retain there validity in first order approximation, given
+Similarly to the previous case, the expressions from the lossless case retain their validity in first order approximation, given
 
 .. math::
 
