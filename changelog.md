@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## Unreleased
 
+### Fixed
+
+- Critical! Wrong calculation value for CPW layers with infinite thickness.
+  We used m = k as the argument for the elliptic integral there, but it has to be m = k^2.
+  This was also wrong in the theory part of the documentation.
+  For finite layers the square was present in the calculation.
+
 ## v0.2.0 - 2023-12-17
 
 ### Changed
