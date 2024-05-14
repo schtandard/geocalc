@@ -76,9 +76,9 @@ def _m_general(hyp_fun: np.ufunc, a: ArrayLike, b: ArrayLike, h: ArrayLike) -> n
     aa, hh = np.meshgrid(a, h, indexing='ij', sparse=True)
     bb, _  = np.meshgrid(b, h, indexing='ij', sparse=True)
     # Consider special cases.
-    # For h = 0 we want m = 0, for h = np.inf we want m = a / b.
+    # For h = 0 we want m = 0, for h = np.inf we want m = (a / b)**2.
     good_hh = np.array((0 < hh) & (hh < np.inf))
-    fallback_hh = np.array(aa / bb * (hh == np.inf))
+    fallback_hh = np.array(aa / bb * np.isinf(hh))**2
     return np.divide(hyp_fun(np.divide(np.pi * aa, 2 * hh, where=good_hh)),
                      hyp_fun(np.divide(np.pi * bb, 2 * hh, where=good_hh)),
                      where=good_hh,
