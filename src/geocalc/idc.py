@@ -135,7 +135,8 @@ def _capacitance_aux(eta: ArrayLike, lmbd: ArrayLike, h: ArrayLike, eps_r: Array
 
 def capacitance(n: ArrayLike, w: ArrayLike, g: ArrayLike, l: ArrayLike = 1,
                 layers_below: LayerSpec = None,
-                layers_above: LayerSpec = None) -> Union[float, np.array]:
+                layers_above: LayerSpec = None,
+                t: ArrayLike = 0) -> Union[float, np.array]:
     """Compute the capacitance.
 
     You can use :func:`.stack_layers` to create values for `layers_below`
@@ -164,6 +165,7 @@ def capacitance(n: ArrayLike, w: ArrayLike, g: ArrayLike, l: ArrayLike = 1,
             corresponds to infinite vacuum.
         layers_above: The dielectric layers above the IDC.
             (In the same format as `layers_below`.)
+        t: Metallization thickness of the IDC.
 
     Returns:
         The IDC's capacitance in the same shape as `n`, `w`, `g` and `l`.
@@ -179,4 +181,11 @@ def capacitance(n: ArrayLike, w: ArrayLike, g: ArrayLike, l: ArrayLike = 1,
     Ci = lower_Ci + upper_Ci
     Ce = lower_Ce + upper_Ce
     C = (n - 3) / 2 * Ci + 2 * (Ci * Ce) / (Ci + Ce)
+    if np.any(t):
+        first_h, first_eps = _layerspec(layers_above)[0]
+        if np.any(first_h < t):
+            raise ValueError("Conductor thicknesses larger than the first"
+                             " dielectric layer are not currently supported.")
+        Cppc = first_eps * eps_0 * t / g
+        C += (n - 1) * Cppc
     return l * C

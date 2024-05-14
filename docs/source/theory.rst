@@ -105,6 +105,43 @@ in both cases.
 
 More details on these calculations can be found in Simons (2001) and Garg et al. (2013).
 
+Correcting for the Metallization Thickness
+==========================================
+The expressions above are derived for an infinitely thin CPW metallization layer.
+When it has a positive thickness, some part of the field will be between the center and ground conductors, inside this layer.
+For small nonzero metallization thicknesses :math:`t` we can approximate the change in capacitance (and thus other values) this leads to by using a reduced, effective gap width :math:`W_{\mathrm{e}} = W - \Delta` (i.e. :math:`a_{\mathrm{e}} = a + \Delta / 2` and :math:`b_{\mathrm{e}} = b - \Delta / 2`) for calculations in the region above the CPW.
+(The metallization layer is assumed to be part of the upper region, so we keep using the original CPW parameters for the lower region.)
+Different sources give varying expressions for :math:`\Delta`:
+
+- Microstrip Lines and Slotlines  (Kuldip Gupta et al., 1996 Artech House)
+
+  .. math::
+
+     \Delta = \frac{1.25 \, t}{\pi} \, \biggl( 1 + \ln\Bigl( \frac{4 \pi S}{t} \Bigr) \biggr)
+
+- Microstrip Lines and Slotlines (Ramesh Garg et al., 2013 Artech House)
+
+  .. math::
+
+     \Delta = \frac{t}{\pi} \biggl( 4.089 + \Bigl( 0.9536 + 3.864 \cdot 10^{-3} \, \frac{b}{t} \Bigr) \ln\Bigl( \frac{4 \pi W}{t} \Bigr) \biggr)
+
+- Analysis and Design of Symmetric Coplanar Lines with Thick Conductors (C. B. Ashesh, 2007, PhD thesis, Indian Institute of Technology, Kharagpur)
+
+  .. math::
+
+     \Delta = \frac{t}{\pi} \biggl( 4.089 + \Bigl( 0.9356 + 3.864 \cdot 10^{-3} \, \frac{b}{t} \Bigr) \ln\Bigl( \frac{4 \pi W}{t} \Bigr) \biggr)
+
+Garg cites Ashesh but writes :math:`53` instead of :math:`35` in the second fitting parameter.
+This is probably a typo, and an incosequential one.
+Also note:
+
+- These corrections are only valid for small values of :math:`t`.
+  Values on the order of :math:`W / 10` should still give reasonably good results, larger values may result in considerable inaccuracies.
+- The expression given by Garg/Ashesh diverges for :math:`t \to 0`, so it can't be used for very small values.
+  A guideline of :math:`t > b / 500` is given.
+- All of these corrections are only discussed in the context of CPW with one infinitely thick substrate below and nothing above.
+  I do expect them to also perform reasonably well for more complicated layer stacks, though.
+
 Further Parameters
 ==================
 Lossless CPWs

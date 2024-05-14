@@ -28,7 +28,7 @@ from __future__ import annotations
 import numpy as np
 from scipy.special import ellipk
 from scipy.constants import epsilon_0 as eps_0, c as c_vac
-from typing import Union
+from typing import Union, Literal
 from numpy.typing import ArrayLike
 from ._util import LayerSpec, _layerspec
 
@@ -169,16 +169,26 @@ def _capacitance_aux(a: ArrayLike, b: ArrayLike, h: ArrayLike, eps_r: ArrayLike)
 
 def _capacitance(a: ArrayLike, b: ArrayLike,
                  layers_below: LayerSpec = None,
-                 layers_above: LayerSpec = None) -> Union[float, np.array]:
+                 layers_above: LayerSpec = None,
+                 t: ArrayLike = 0) -> Union[float, np.array]:
     lower_C, lower_Cvac = _capacitance_aux(a, b, *zip(*_layerspec(layers_below)))
     upper_C, upper_Cvac = _capacitance_aux(a, b, *zip(*_layerspec(layers_above)))
     C = lower_C + upper_C
     Cvac = lower_Cvac + upper_Cvac
+    if np.any(t):
+        first_h, first_eps = _layerspec(layers_above)[0]
+        if np.any(first_h < t):
+            raise ValueError("Conductor thicknesses larger than the first"
+                             " dielectric layer are not currently supported.")
+        Cppc = 2 * eps_0 * t / (b - a)
+        Cvac += Cppc
+        C += first_eps * Cppc
     return C, Cvac
 
 def capacitance(a: ArrayLike, b: ArrayLike,
                 layers_below: LayerSpec = None,
-                layers_above: LayerSpec = None) -> Union[float, np.array]:
+                layers_above: LayerSpec = None, *,
+                t: ArrayLike = 0) -> Union[float, np.array]:
     """Compute the specific capacitance.
 
     You can use :func:`.stack_layers` to create values for `layers_below`
@@ -199,16 +209,18 @@ def capacitance(a: ArrayLike, b: ArrayLike,
             corresponds to infinite vacuum.
         layers_above: The dielectric layers above the CPW.
             (In the same format as `layers_below`.)
+        t: Metallization thickness of the CPW.
 
     Returns:
         The CPW's specific capacitance in the same shape as `a` and `b`.
 
     """
-    return _capacitance(a, b, layers_below, layers_above)[0]
+    return _capacitance(a, b, layers_below, layers_above, t)[0]
 
 def characteristics(a: ArrayLike, b: ArrayLike,
                     layers_below: LayerSpec = None,
-                    layers_above: LayerSpec = None) -> dict:
+                    layers_above: LayerSpec = None, *,
+                    t: ArrayLike = 0) -> dict:
     """Compute characteristic values.
 
     You can use :func:`.stack_layers` to create values for `layers_below`
@@ -229,13 +241,14 @@ def characteristics(a: ArrayLike, b: ArrayLike,
             corresponds to infinite vacuum.
         layers_above: The dielectric layers above the CPW.
             (In the same format as `layers_below`.)
+        t: Metallization thickness of the CPW.
 
     Returns:
         A dict of characteristic values comprising `Z0`, `v_ph`, `eps_eff`,
         `C` and `L`.
 
     """
-    C, Cvac = _capacitance(a, b, layers_below, layers_above)
+    C, Cvac = _capacitance(a, b, layers_below, layers_above, t)
     eps_eff = C / Cvac
     v_ph = c_vac / np.sqrt(eps_eff)
     Z0 = 1 / (C * v_ph)
@@ -244,7 +257,8 @@ def characteristics(a: ArrayLike, b: ArrayLike,
 
 def impedance(a: ArrayLike, b: ArrayLike,
               layers_below: LayerSpec = None,
-              layers_above: LayerSpec = None) -> tuple[Union[float, np.array]]:
+              layers_above: LayerSpec = None, *,
+              t: ArrayLike = 0) -> tuple[Union[float, np.array]]:
     """Compute the characteristic impedance.
 
     You can use :func:`.stack_layers` to create values for `layers_below`
@@ -265,9 +279,10 @@ def impedance(a: ArrayLike, b: ArrayLike,
             corresponds to infinite vacuum.
         layers_above: The dielectric layers above the CPW.
             (In the same format as `layers_below`.)
+        t: Metallization thickness of the CPW.
 
     Returns:
         The CPW's characteristic impedance in the same shape as `a` and `b`.
 
     """
-    return characteristics(a, b, layers_below, layers_above)['Z0']
+    return characteristics(a, b, layers_below, layers_above, t=t)['Z0']
