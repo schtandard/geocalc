@@ -88,9 +88,9 @@ The parameter :math:`m(h)` is given by
 
 .. math::
 
-   m^{\mathrm{cov}}(h) = \frac{\tanh\bigl( \frac{\pi a}{2 h} \bigr)}{\tanh\bigl( \frac{\pi b}{2 h} \bigr)}
+   m^{\mathrm{cov}}(h) = \biggl( \frac{\tanh\bigl( \frac{\pi a}{2 h} \bigr)}{\tanh\bigl( \frac{\pi b}{2 h} \bigr)} \biggr)^2
    \qquad\text{and}\qquad
-   m^{\mathrm{int}}(h) = \frac{\sinh\bigl( \frac{\pi a}{2 h} \bigr)}{\sinh\bigl( \frac{\pi b}{2 h} \bigr)}
+   m^{\mathrm{int}}(h) = \biggl( \frac{\sinh\bigl( \frac{\pi a}{2 h} \bigr)}{\sinh\bigl( \frac{\pi b}{2 h} \bigr)} \biggr)^2
 
 for layers with or without a metal cover, respectively (i.e. at an interface between dielectrics or at the edge of the layer stack, respectively).
 Note that
@@ -99,7 +99,7 @@ Note that
 
    \lim_{h \to 0} m = 0
    \qquad\text{and}\qquad
-   \lim_{h \to \infty} m = \frac ab
+   \lim_{h \to \infty} m = \Bigl(\frac ab\Bigr)^2
 
 in both cases.
 
