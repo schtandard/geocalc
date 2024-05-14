@@ -1,4 +1,4 @@
-# Changelog
+# Changelog of the `geocalc` package
 
 All notable changes to this project will be documented in this file.
 
