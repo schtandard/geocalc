@@ -78,11 +78,12 @@ def _m_general(hyp_fun: np.ufunc, a: ArrayLike, b: ArrayLike, h: ArrayLike) -> n
     # Consider special cases.
     # For h = 0 we want m = 0, for h = np.inf we want m = (a / b)**2.
     good_hh = np.array((0 < hh) & (hh < np.inf))
-    fallback_hh = np.array(aa / bb * np.isinf(hh))**2
-    return np.divide(hyp_fun(np.divide(np.pi * aa, 2 * hh, where=good_hh)),
-                     hyp_fun(np.divide(np.pi * bb, 2 * hh, where=good_hh)),
-                     where=good_hh,
-                     out=fallback_hh) ** 2
+    fallback = np.array(aa / bb * np.isinf(hh))
+    kk = np.divide(hyp_fun(np.divide(np.pi * aa, 2 * hh, where=good_hh)),
+                   hyp_fun(np.divide(np.pi * bb, 2 * hh, where=good_hh)),
+                   where=good_hh,
+                   out=fallback)
+    return kk**2
 
 def m_interface(a: ArrayLike, b: ArrayLike, h: ArrayLike) -> np.array:
     r"""Calculate :math:`m(h)` for dielectric interfaces.
