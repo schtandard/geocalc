@@ -18,7 +18,7 @@ Easily calculate the impedance of a given CPW structure
    >>> import numpy as np
    >>> below = [(500, 11.7), (1500, 1)]
    >>> cpw.impedance(500, 700, below)
-   39.906446055281194
+   39.9064460552812
 
 or find the right values for a given impedance
 
@@ -31,7 +31,7 @@ or find the right values for a given impedance
    >>> fun = lambda S: cpw.impedance(*cpw.SW2ab(S, 200), below) - 50
    >>> sol = root_scalar(fun, bracket=[1, 1000])
    >>> sol.root
-   383.8928758406658
+   383.8928758406656
 
 .. toctree::
    :maxdepth: 2
