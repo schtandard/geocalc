@@ -59,7 +59,7 @@ def _m_general(hyp_fun: np.ufunc, a: ArrayLike, b: ArrayLike, h: ArrayLike) -> n
 
     .. math::
 
-        m(h) = \frac{ f\bigl( \frac{\pi a}{2 h} \bigr) }{ f\bigl( \frac{\pi b}{2 h} \bigr) }
+        m(h) = \biggl( \frac{ f\bigl( \frac{\pi a}{2 h} \bigr) }{ f\bigl( \frac{\pi b}{2 h} \bigr) } \biggr)^2
 
     where :math:`f` is the given hyperolic function.
 
@@ -92,7 +92,7 @@ def m_interface(a: ArrayLike, b: ArrayLike, h: ArrayLike) -> np.array:
 
     .. math::
 
-        m(h) = \frac{ \sinh\bigl( \frac{\pi a}{2 h} \bigr) }{ \sinh\bigl( \frac{\pi b}{2 h} \bigr) } .
+        m(h) = \biggl( \frac{ \sinh\bigl( \frac{\pi a}{2 h} \bigr) }{ \sinh\bigl( \frac{\pi b}{2 h} \bigr) } \biggr)^2 .
 
     Arguments:
         a, b: Parameters describing the CPW geometry.
@@ -111,7 +111,7 @@ def m_cover(a: ArrayLike, b: ArrayLike, h: ArrayLike) -> np.array:
 
     .. math::
 
-        m(h) = \frac{ \tanh\bigl( \frac{\pi a}{2 h} \bigr) }{ \tanh\bigl( \frac{\pi b}{2 h} \bigr) } .
+        m(h) = \biggl( \frac{ \tanh\bigl( \frac{\pi a}{2 h} \bigr) }{ \tanh\bigl( \frac{\pi b}{2 h} \bigr) } \biggr)^2 .
 
     Arguments:
         a, b: Parameters describing the CPW geometry.
