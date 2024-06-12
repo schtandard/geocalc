@@ -28,7 +28,7 @@ from scipy.special import ellipk, ellipj
 from scipy.constants import epsilon_0 as eps_0
 import mpmath
 jtheta = np.vectorize(mpmath.jtheta, otypes=['float64'], excluded={0, 1})
-from typing import Union
+from typing import Callable, Union
 from numpy.typing import ArrayLike
 from ._util import LayerSpec, _layerspec
 
@@ -134,13 +134,13 @@ def _capacitance_aux(eta: ArrayLike, lmbd: ArrayLike, h: ArrayLike, eps_r: Array
     return Ci, Ce
 
 def capacitance(n: ArrayLike, w: ArrayLike, g: ArrayLike, l: ArrayLike = 1,
-                layers_below: LayerSpec = None,
-                layers_above: LayerSpec = None,
+                below: LayerSpec = None,
+                above: LayerSpec = None, *,
                 t: ArrayLike = 0) -> Union[float, np.array]:
     """Compute the capacitance.
 
-    You can use :func:`.stack_layers` to create values for `layers_below`
-    and `layers_above`.
+    You can use :func:`.stack_layers` to create values for `below`
+    and `above`.
 
     First the specific capacitance is calculated, then it is multiplied by `l`
     and returned. The unit of the specific capacitance will be F / m irrespective
@@ -158,12 +158,12 @@ def capacitance(n: ArrayLike, w: ArrayLike, g: ArrayLike, l: ArrayLike = 1,
         g: Width of each gap between fingers.
         l: Length of the overlap of the fingers.
             Must be given in m.
-        layers_below: The dielectric layers below the IDC.
+        below: The dielectric layers below the IDC.
             Each layer should be given as a tuple containing the height at which
             the layer ends and the relative permittivity of that layer. The last
             layer is considered to be terminated by a metal cover. The default
             corresponds to infinite vacuum.
-        layers_above: The dielectric layers above the IDC.
+        above: The dielectric layers above the IDC.
             (In the same format as `layers_below`.)
         t: Metallization thickness of the IDC.
 
@@ -176,13 +176,13 @@ def capacitance(n: ArrayLike, w: ArrayLike, g: ArrayLike, l: ArrayLike = 1,
     eta, lmbd = wg2etalmbd(np.array(w), np.array(g))
     l = np.array(l)
     # Now do the calculation.
-    lower_Ci, lower_Ce = _capacitance_aux(eta, lmbd, *zip(*_layerspec(layers_below)))
-    upper_Ci, upper_Ce = _capacitance_aux(eta, lmbd, *zip(*_layerspec(layers_above)))
+    lower_Ci, lower_Ce = _capacitance_aux(eta, lmbd, *zip(*_layerspec(below)))
+    upper_Ci, upper_Ce = _capacitance_aux(eta, lmbd, *zip(*_layerspec(above)))
     Ci = lower_Ci + upper_Ci
     Ce = lower_Ce + upper_Ce
     C = (n - 3) / 2 * Ci + 2 * (Ci * Ce) / (Ci + Ce)
     if np.any(t):
-        first_h, first_eps = _layerspec(layers_above)[0]
+        first_h, first_eps = _layerspec(above)[0]
         if np.any(first_h < t):
             raise ValueError("Conductor thicknesses larger than the first"
                              " dielectric layer are not currently supported.")
