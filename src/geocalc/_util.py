@@ -4,12 +4,12 @@ from __future__ import annotations
 import numpy as np
 from typing import Union, Optional, Iterable
 
-LayerSpec = Optional[Union[Iterable[tuple], float, int]]
+LayerSpec = Optional[Union[Iterable[tuple], float, int, np.floating, np.integer]]
 
 def _layerspec(layers: LayerSpec) -> Iterable[tuple]:
     if layers is None:
         return [(np.inf, 1)]
-    if isinstance(layers, float) or isinstance(layers, int):
+    if isinstance(layers, (float, int, np.floating, np.integer)):
         return [(np.inf, layers)]
     return layers
 
