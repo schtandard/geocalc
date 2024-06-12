@@ -169,21 +169,21 @@ def _capacitance_aux(a: ArrayLike, b: ArrayLike, h: ArrayLike, eps_r: ArrayLike)
     return C.reshape(np.shape(a)), Cvac_tot.reshape(np.shape(a))
 
 def _capacitance(a: ArrayLike, b: ArrayLike,
-                 layers_below: LayerSpec = None,
-                 layers_above: LayerSpec = None) -> Union[float, np.array]:
-    lower_C, lower_Cvac = _capacitance_aux(a, b, *zip(*_layerspec(layers_below)))
-    upper_C, upper_Cvac = _capacitance_aux(a, b, *zip(*_layerspec(layers_above)))
+                 below: LayerSpec = None,
+                 above: LayerSpec = None) -> Union[float, np.array]:
+    lower_C, lower_Cvac = _capacitance_aux(a, b, *zip(*_layerspec(below)))
+    upper_C, upper_Cvac = _capacitance_aux(a, b, *zip(*_layerspec(above)))
     C = lower_C + upper_C
     Cvac = lower_Cvac + upper_Cvac
     return C, Cvac
 
 def capacitance(a: ArrayLike, b: ArrayLike,
-                layers_below: LayerSpec = None,
-                layers_above: LayerSpec = None) -> Union[float, np.array]:
+                below: LayerSpec = None,
+                above: LayerSpec = None) -> Union[float, np.array]:
     """Compute the specific capacitance.
 
-    You can use :func:`.stack_layers` to create values for `layers_below`
-    and `layers_above`.
+    You can use :func:`.stack_layers` to create values for `below`
+    and `above`.
 
     The unit of the return value will be F / m irrespective of the unit of the
     input lengths (as long as they all have the same unit).
@@ -193,27 +193,27 @@ def capacitance(a: ArrayLike, b: ArrayLike,
             (i.e. half the width of the center conductor).
         b: Distance of the outer edge of the CPW gap from the center line
             (i.e. `a` plus the gap width).
-        layers_below: The dielectric layers below the CPW.
+        below: The dielectric layers below the CPW.
             Each layer should be given as a tuple containing the height at which
             the layer ends and the relative permittivity of that layer. The last
             layer is considered to be terminated by a metal cover. The default
             corresponds to infinite vacuum.
-        layers_above: The dielectric layers above the CPW.
-            (In the same format as `layers_below`.)
+        above: The dielectric layers above the CPW.
+            (In the same format as `below`.)
 
     Returns:
         The CPW's specific capacitance in the same shape as `a` and `b`.
 
     """
-    return _capacitance(a, b, layers_below, layers_above)[0]
+    return _capacitance(a, b, below, above)[0]
 
 def characteristics(a: ArrayLike, b: ArrayLike,
-                    layers_below: LayerSpec = None,
-                    layers_above: LayerSpec = None) -> dict:
+                    below: LayerSpec = None,
+                    above: LayerSpec = None) -> dict:
     """Compute characteristic values.
 
-    You can use :func:`.stack_layers` to create values for `layers_below`
-    and `layers_above`.
+    You can use :func:`.stack_layers` to create values for `below`
+    and `above`.
 
     The units of the returned values will be SI base units irrespective of the
     unit of the input lengths (as long as they all have the same unit).
@@ -223,20 +223,20 @@ def characteristics(a: ArrayLike, b: ArrayLike,
             (i.e. half the width of the center conductor).
         b: Distance of the outer edge of the CPW gap from the center line
             (i.e. `a` plus the gap width).
-        layers_below: The dielectric layers below the CPW.
+        below: The dielectric layers below the CPW.
             Each layer should be given as a tuple containing the height at which
             the layer ends and the relative permittivity of that layer. The last
             layer is considered to be terminated by a metal cover. The default
             corresponds to infinite vacuum.
-        layers_above: The dielectric layers above the CPW.
-            (In the same format as `layers_below`.)
+        above: The dielectric layers above the CPW.
+            (In the same format as `below`.)
 
     Returns:
         A dict of characteristic values comprising `Z0`, `v_ph`, `eps_eff`,
         `C` and `L`.
 
     """
-    C, Cvac = _capacitance(a, b, layers_below, layers_above)
+    C, Cvac = _capacitance(a, b, below, above)
     eps_eff = C / Cvac
     v_ph = c_vac / np.sqrt(eps_eff)
     Z0 = 1 / (C * v_ph)
@@ -244,12 +244,12 @@ def characteristics(a: ArrayLike, b: ArrayLike,
     return {'Z0': Z0, 'v_ph': v_ph, 'eps_eff': eps_eff, 'C': C, 'L': L}
 
 def impedance(a: ArrayLike, b: ArrayLike,
-              layers_below: LayerSpec = None,
-              layers_above: LayerSpec = None) -> tuple[Union[float, np.array]]:
+              below: LayerSpec = None,
+              above: LayerSpec = None) -> tuple[Union[float, np.array]]:
     """Compute the characteristic impedance.
 
-    You can use :func:`.stack_layers` to create values for `layers_below`
-    and `layers_above`.
+    You can use :func:`.stack_layers` to create values for `below`
+    and `above`.
 
     The unit of the return value will be Ohm irrespective of the unit of the
     input lengths (as long as they all have the same unit).
@@ -259,16 +259,16 @@ def impedance(a: ArrayLike, b: ArrayLike,
             (i.e. half the width of the center conductor).
         b: Distance of the outer edge of the CPW gap from the center line
             (i.e. `a` plus the gap width).
-        layers_below: The dielectric layers below the CPW.
+        below: The dielectric layers below the CPW.
             Each layer should be given as a tuple containing the height at which
             the layer ends and the relative permittivity of that layer. The last
             layer is considered to be terminated by a metal cover. The default
             corresponds to infinite vacuum.
-        layers_above: The dielectric layers above the CPW.
-            (In the same format as `layers_below`.)
+        above: The dielectric layers above the CPW.
+            (In the same format as `below`.)
 
     Returns:
         The CPW's characteristic impedance in the same shape as `a` and `b`.
 
     """
-    return characteristics(a, b, layers_below, layers_above)['Z0']
+    return characteristics(a, b, below, above)['Z0']

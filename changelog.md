@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## Unreleased
 
+### Changed
+
+- Rename arguments `layers_below` and `layers_above` to `below` and `above`.
+
 ### Fixed
 
 - Accept numpy scalars as layer specification.
