@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 - Accept numpy scalars as layer specification.
+- Handle IDC calculation with geometry parameter arrays and non-trivial dielectric layers.
 - Critical! Wrong factor in IDC capacitance calculation with inifinite dielectric layers.
   Luckily, the resulting error was small.
 

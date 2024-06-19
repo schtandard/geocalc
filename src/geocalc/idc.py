@@ -95,8 +95,7 @@ def fieldvol(m: np.array) -> np.array:
     return ellipk(m) / ellipk(1 - m)
 
 def _capacitance_auxaux(mintfunc: Callable, mcovfunc: Callable,
-                        eta: ArrayLike, r: ArrayLike, eps_r: ArrayLike) -> np.array:
-    eeta, rr = np.meshgrid(eta, r, indexing='ij', sparse=True)
+                        eeta: ArrayLike, rr: ArrayLike, eeps_r: ArrayLike) -> np.array:
     # Calculate the m(h).
     m = np.concatenate((np.zeros_like(eeta),
                         mintfunc(eeta, rr[:, :-1]),
@@ -107,8 +106,8 @@ def _capacitance_auxaux(mintfunc: Callable, mcovfunc: Callable,
     # Calculate the layer vacuum capacitances.
     Cvac = Cvac_accum[:, 1:] - Cvac_accum[:, :-1]
     # Calculate the capacitance.
-    C = np.sum(Cvac * eps_r, axis=1)
-    return C.reshape(np.shape(eta))
+    C = np.sum(Cvac * eeps_r, axis=1)
+    return C
 
 def _capacitance_aux(eta: ArrayLike, lmbd: ArrayLike, h: ArrayLike, eps_r: ArrayLike) -> tuple[np.array, np.array]:
     """Compute the half-plane partial specific capacitances.
@@ -128,10 +127,14 @@ def _capacitance_aux(eta: ArrayLike, lmbd: ArrayLike, h: ArrayLike, eps_r: Array
         of the IDC in the half-plane.
 
     """
-    r = np.array(h) / np.array(lmbd)
-    Ci = _capacitance_auxaux(mi_interface, mi_cover, eta, r, eps_r)
-    Ce = _capacitance_auxaux(me_interface, me_cover, eta, r, eps_r)
-    return Ci, Ce
+    # eta and lmbd should have the same shape, as should h and eps_r.
+    eeta, hh = np.meshgrid(eta, h, indexing='ij', sparse=True)
+    llmbd, eeps_r = np.meshgrid(lmbd, eps_r, indexing='ij', sparse=True)
+    rr = hh / llmbd
+    Ci = _capacitance_auxaux(mi_interface, mi_cover, eeta, rr, eeps_r)
+    Ce = _capacitance_auxaux(me_interface, me_cover, eeta, rr, eeps_r)
+    # Reshape the results to make sure that scalar inputs lead to scalar outputs.
+    return Ci.reshape(np.shape(eta)), Ce.reshape(np.shape(eta))
 
 def capacitance(n: ArrayLike, w: ArrayLike, g: ArrayLike, l: ArrayLike = 1,
                 below: LayerSpec = None,
