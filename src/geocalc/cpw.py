@@ -136,7 +136,7 @@ def fieldvol(m: np.array) -> np.array:
     return 2 * ellipk(m) / ellipk(1 - m)
 
 def _capacitance_aux(a: ArrayLike, b: ArrayLike, h: ArrayLike, eps_r: ArrayLike) -> tuple[np.array, np.array]:
-    """Compute the half-plane specific capacitance contributions and its vacuum value.
+    """Compute the half-plane specific capacitance and its vacuum value.
 
     The result of this computation for both half planes can then be used to
     calculate the impedance of a CPW.
@@ -166,6 +166,7 @@ def _capacitance_aux(a: ArrayLike, b: ArrayLike, h: ArrayLike, eps_r: ArrayLike)
     Cvac = Cvac_accum[:, 1:] - Cvac_accum[:, :-1]
     # Calculate the capacitance.
     C = np.sum(Cvac * eps_r, axis=1)
+    # Reshape the results to make sure that scalar inputs lead to scalar outputs.
     return C.reshape(np.shape(a)), Cvac_tot.reshape(np.shape(a))
 
 def _capacitance(a: ArrayLike, b: ArrayLike,
