@@ -63,7 +63,7 @@ def me_interface(eta: ArrayLike, r: ArrayLike) -> np.array:
     # Consider special cases.
     # For r = 0 we want m = 0, for r = np.inf we want m = 2 * sqrt(eta) / (1 + eta).
     good_r = np.array((0 < r) & (r < np.inf))
-    fallback = np.ones_like(r) * 2 * eta / (1 + eta)**2
+    fallback = np.ones_like(r) * 4 * eta / (1 + eta)**2
     t3 = np.cosh(np.divide(np.pi * (1 - eta),  (8 * r),
                            where=good_r, out=np.zeros_like(fallback)))
     t4 = np.cosh(np.divide(np.pi * (1 + eta),  (8 * r),
