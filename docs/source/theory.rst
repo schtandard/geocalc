@@ -230,7 +230,8 @@ Inderdigital Capacitors (IDCs)
 ------------------------------
 The Approach
 ============
-For an interdigital capacitor described by the parameters :math:`n`, :math:`\eta` and :math:`\lambda` we calculate the contributions :math:`C_{\mathrm i}` of the a between two interior electrodes and :math:`C_{\mathrm e}` of a gap next to an exterior electrode separately.
+For an interdigital capacitor described by the parameters :math:`n`, :math:`\eta` and :math:`\lambda` we calculate the contributions :math:`C_{\mathrm i}` of a half gap next to an interior electrodes and :math:`C_{\mathrm e}` of a half gap next to an exterior electrode separately.
+A "half gap" refers to the region between the center of an electrode and the center of an adjacent gap, so that the capacitance between two inner electrodes is modeled as two :math:`C_{\mathrm i}` in series and the capacitance between an inner and an outer electrode is modeled as a :math:`C_{\mathrm i}` and a :math:`C_{\mathrm e}` in series.
 The total specific capacitance is then given by
 
 .. math::

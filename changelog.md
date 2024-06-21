@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Handle IDC calculation with geometry parameter arrays and non-trivial dielectric layers.
 - Critical! Wrong factor in IDC capacitance calculation with inifinite dielectric layers.
   Luckily, the resulting error was small.
+- Improved misleading phrasing in IDC theory.
 
 ## 2024-05-15 - v0.2.2
 
