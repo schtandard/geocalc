@@ -24,8 +24,8 @@ The meanings of the geometry parameter names are shown in this drawing (top view
 # This __future__ import will become obsolete in Python 3.10.
 from __future__ import annotations
 import numpy as np
-from scipy.special import ellipk, ellipj
 from scipy.constants import epsilon_0 as eps_0
+from scipy.special import ellipk, ellipj
 import mpmath
 jtheta = np.vectorize(mpmath.jtheta, otypes=['float64'], excluded={0, 1})
 from typing import Callable, Union

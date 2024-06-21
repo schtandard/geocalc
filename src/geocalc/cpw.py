@@ -26,8 +26,8 @@ The Parameters `c`, `X` and `t` are currrently not considered by any of the func
 
 from __future__ import annotations
 import numpy as np
-from scipy.special import ellipk
 from scipy.constants import epsilon_0 as eps_0, c as c_vac
+from scipy.special import ellipk
 from typing import Union, Literal
 from numpy.typing import ArrayLike
 from ._util import LayerSpec, _layerspec
