@@ -28,12 +28,43 @@ from scipy.constants import epsilon_0 as eps_0
 from scipy.special import ellipk, ellipj
 import mpmath
 jtheta = np.vectorize(mpmath.jtheta, otypes=['float64'], excluded={0, 1})
-from typing import Callable, Union
+import typing
+from typing import Callable, Union, Literal
 from numpy.typing import ArrayLike
-from ._util import LayerSpec, _layerspec
+from ._util import LayerSpec, _layerspec, _ppc_C, _ppcedge_C, _Cohn_C
 
 __all__ = ['wg2etalmbd', 'etalmbd2wg',
            'capacitance']
+
+ThicknessCorrectionMethod = Literal[
+    'ppc', 'ppcedge', 'Cohn',
+]
+thickness_correction_method = 'ppc'
+
+class ThicknessCorrectionScope:
+    """A context manager for temporarily changing thickness_correction_method.
+
+    The method is changed upon entering and changed back upon exiting.
+
+    Arguments:
+        method: Method to change to.
+
+    """
+
+    def __init__(self, method: ThicknessCorrectionMethod):
+        if method not in typing.get_args(ThicknessCorrectionMethod):
+            raise ValueError(f"Unknown t correction method {method!r}.")
+        self._method = method
+        self._outer_method = None
+
+    def __enter__(self):
+        global thickness_correction_method
+        self._outer_method = thickness_correction_method
+        thickness_correction_method = self._method
+
+    def __exit__(self, type, value, traceback):
+        global thickness_correction_method
+        thickness_correction_method = self._outer_method
 
 def wg2etalmbd(w, g):
     """Calculate `lmbd` and `eta` from `w` and `g`."""
@@ -136,6 +167,129 @@ def _capacitance_aux(eta: ArrayLike, lmbd: ArrayLike, h: ArrayLike, eps_r: Array
     # Reshape the results to make sure that scalar inputs lead to scalar outputs.
     return Ci.reshape(np.shape(eta)), Ce.reshape(np.shape(eta))
 
+def _tcorr_none_capacitance(eta, lmbd, below, above):
+    lower_Ci, lower_Ce = _capacitance_aux(eta, lmbd, *zip(*_layerspec(below)))
+    upper_Ci, upper_Ce = _capacitance_aux(eta, lmbd, *zip(*_layerspec(above)))
+    Ci = lower_Ci + upper_Ci
+    Ce = lower_Ce + upper_Ce
+    return Ci, Ce
+
+def _tcorr_ppc_C_aux(g, t, Cfun, epsr_above):
+    return epsr_above * Cfun(t / g)
+
+def _tcorr_ppc_C(g, above, t):
+    first_h, first_epsr = _layerspec(above)[0]
+    if np.any(first_h < t):
+        raise ValueError("Conductor thicknesses larger than the first"
+                         " dielectric layer are not currently supported.")
+    return _tcorr_ppc_C_aux(g, t, _ppc_C, first_epsr)
+
+def _tcorr_ppc_capacitance_aux(eta, lmbd, below, above, ppc_C):
+    lower_Ci, lower_Ce = _capacitance_aux(eta, lmbd, *zip(*_layerspec(below)))
+    upper_Ci, upper_Ce = _capacitance_aux(eta, lmbd, *zip(*_layerspec(above)))
+    Ci = lower_Ci + upper_Ci + 2 * ppc_C
+    Ce = lower_Ce + upper_Ce + 2 * ppc_C
+    return Ci, Ce
+
+def _tcorr_ppc_capacitance(w, g, eta, lmbd, below, above, t):
+    return _tcorr_ppc_capacitance_aux(eta, lmbd, below, above,
+                                      _tcorr_ppc_C(g, above, t))
+
+def _tcorr_ppcedge_C_aux(g, t, Cfun, epsr_below, epsr_above):
+    lmbd = t / g
+    Cvac = Cfun(lmbd)
+    Cvac_ppc = _ppc_C(lmbd)
+    single_edge_contribution = (Cvac - Cvac_ppc) / 2
+    return epsr_above * Cvac + (epsr_below - epsr_above) * single_edge_contribution
+
+def _tcorr_ppcedge_C(g, below, above, t):
+    first_h_below, first_epsr_below = _layerspec(below)[0]
+    if np.any(first_h_below < 2 * g):
+        raise ValueError("Substrate thicknesses smaller than twice the gap size"
+                         " are not currently supported.")
+    first_h_above, first_epsr_above = _layerspec(above)[0]
+    if np.any(first_h_above < t + 2 * g):
+        raise ValueError("Conductor thicknesses larger than the first"
+                         " dielectric layer minus twice the gap size"
+                         " are not currently supported.")
+    return _tcorr_ppcedge_C_aux(g, t, _ppcedge_C, first_epsr_below, first_epsr_above)
+
+def _tcorr_ppcedge_capacitance(w, g, eta, lmbd, below, above, t):
+    return _tcorr_ppc_capacitance_aux(eta, lmbd, below, above,
+                                      _tcorr_ppcedge_C(g, below, above, t))
+
+def _tcorr_Cohn_C(g, below, above, t):
+    first_h_below, first_epsr_below = _layerspec(below)[0]
+    if np.any(first_h_below < 2 * g):
+        raise ValueError("Substrate thicknesses smaller than twice the gap size"
+                         " are not currently supported.")
+    first_h_above, first_epsr_above = _layerspec(above)[0]
+    if np.any(first_h_above < t + 2 * g):
+        raise ValueError("Conductor thicknesses larger than the first"
+                         " dielectric layer minus twice the gap size"
+                         " are not currently supported.")
+    return _tcorr_ppcedge_C_aux(g, t, _Cohn_C, first_epsr_below, first_epsr_above)
+
+def _tcorr_Cohn_capacitance(w, g, eta, lmbd, below, above, t):
+    return _tcorr_ppc_capacitance_aux(eta, lmbd, below, above,
+                                      _tcorr_Cohn_C(g, below, above, t))
+
+ThicknessCorrectionMethod = Literal[
+    'ppc', 'ppcedge', 'Cohn',
+]
+def set_thickess_correction_method(method: ThicknessCorrectionMethod):
+    """Set the thickness correction method to use.
+
+    When you calculate an IDC capacitance with non-zero metallization thickness `t`,
+    the method (last) set up using this function will be used.
+
+    Arguments:
+        method: Name of the method to use.
+
+    Raises:
+        ValueError: When an unknown method name is supplied.
+
+    """
+    global _tcorr_capacitance
+    if method == 'ppc':
+        _tcorr_capacitance = _tcorr_ppc_capacitance
+    elif method == 'ppcedge':
+        _tcorr_capacitance = _tcorr_ppcedge_capacitance
+    elif method == 'Cohn':
+        _tcorr_capacitance = _tcorr_Cohn_capacitance
+    else:
+        raise ValueError(f"Unknown t correction method {method!r}.")
+
+_tcorr_capacitance = None
+set_thickess_correction_method('ppc')
+
+def _capacitance(n: ArrayLike, w: ArrayLike, g: ArrayLike, l: ArrayLike = 1,
+                 below: LayerSpec = None,
+                 above: LayerSpec = None,
+                 t: ArrayLike = 0) -> Union[float, np.array]:
+    # Make sure everything's an array.
+    n = np.asarray(n)
+    w = np.asarray(w)
+    g = np.asarray(g)
+    eta, lmbd = wg2etalmbd(w, g)
+    l = np.asarray(l)
+    t = np.asarray(t)
+    # Now do the calculation.
+    if np.any(t):
+        if thickness_correction_method == 'ppc':
+            _capfun = _tcorr_ppc_capacitance
+        elif thickness_correction_method == 'ppcedge':
+            _capfun = _tcorr_ppcedge_capacitance
+        elif thickness_correction_method == 'Cohn':
+            _capfun = _tcorr_Cohn_capacitance
+        else:
+            raise ValueError(f"Unknown t correction method {thickness_correction_method!r}.")
+        Ci, Ce = _capfun(w, g, eta, lmbd, below, above, t)
+    else:
+        Ci, Ce = _tcorr_none_capacitance(eta, lmbd, below, above)
+    C = (n - 3) / 2 * Ci + 2 * (Ci * Ce) / (Ci + Ce)
+    return l * C
+
 def capacitance(n: ArrayLike, w: ArrayLike, g: ArrayLike, l: ArrayLike = 1,
                 below: LayerSpec = None,
                 above: LayerSpec = None, *,
@@ -174,21 +328,4 @@ def capacitance(n: ArrayLike, w: ArrayLike, g: ArrayLike, l: ArrayLike = 1,
         The IDC's capacitance in the same shape as `n`, `w`, `g` and `l`.
 
     """
-    # Make sure everything's an array.
-    n = np.array(n)
-    eta, lmbd = wg2etalmbd(np.array(w), np.array(g))
-    l = np.array(l)
-    # Now do the calculation.
-    lower_Ci, lower_Ce = _capacitance_aux(eta, lmbd, *zip(*_layerspec(below)))
-    upper_Ci, upper_Ce = _capacitance_aux(eta, lmbd, *zip(*_layerspec(above)))
-    Ci = lower_Ci + upper_Ci
-    Ce = lower_Ce + upper_Ce
-    C = (n - 3) / 2 * Ci + 2 * (Ci * Ce) / (Ci + Ce)
-    if np.any(t):
-        first_h, first_eps = _layerspec(above)[0]
-        if np.any(first_h < t):
-            raise ValueError("Conductor thicknesses larger than the first"
-                             " dielectric layer are not currently supported.")
-        Cppc = first_eps * eps_0 * t / g
-        C += (n - 1) * Cppc
-    return l * C
+    return _capacitance(n, w, g, l, below, above, t)

@@ -28,12 +28,44 @@ from __future__ import annotations
 import numpy as np
 from scipy.constants import epsilon_0 as eps_0, c as c_vac
 from scipy.special import ellipk
+import typing
 from typing import Union, Literal
 from numpy.typing import ArrayLike
-from ._util import LayerSpec, _layerspec
+from ._util import LayerSpec, _layerspec, _ppc_C, _ppcedge_C, _Cohn_C
 
 __all__ = ['ab2SW', 'SW2ab', 'DW2ab', 'dW2ab',
            'capacitance', 'impedance', 'characteristics']
+
+ThicknessCorrectionMethod = Literal[
+    'Gupta', 'Garg', 'Ashesh',
+    'ppc', 'ppcedge', 'Cohn',
+]
+thickness_correction_method = 'ppc'
+
+class ThicknessCorrectionScope:
+    """A context manager for temporarily changing thickness_correction_method.
+
+    The method is changed upon entering and changed back upon exiting.
+
+    Arguments:
+        method: Method to change to.
+
+    """
+
+    def __init__(self, method: ThicknessCorrectionMethod):
+        if method not in typing.get_args(ThicknessCorrectionMethod):
+            raise ValueError(f"Unknown t correction method {method!r}.")
+        self._method = method
+        self._outer_method = None
+
+    def __enter__(self):
+        global thickness_correction_method
+        self._outer_method = thickness_correction_method
+        thickness_correction_method = self._method
+
+    def __exit__(self, type, value, traceback):
+        global thickness_correction_method
+        thickness_correction_method = self._outer_method
 
 def ab2SW(a, b):
     """Calculate `S` and `W` from `a` and `b`."""
@@ -169,23 +201,174 @@ def _capacitance_aux(a: ArrayLike, b: ArrayLike, h: ArrayLike, eps_r: ArrayLike)
     # Reshape the results to make sure that scalar inputs lead to scalar outputs.
     return C.reshape(np.shape(a)), Cvac_tot.reshape(np.shape(a))
 
-def _capacitance(a: ArrayLike, b: ArrayLike,
-                 below: LayerSpec = None,
-                 above: LayerSpec = None,
-                 t: ArrayLike = 0) -> Union[float, np.array]:
+def _tcorr_none_capacitance(a, b, below, above):
     lower_C, lower_Cvac = _capacitance_aux(a, b, *zip(*_layerspec(below)))
     upper_C, upper_Cvac = _capacitance_aux(a, b, *zip(*_layerspec(above)))
     C = lower_C + upper_C
     Cvac = lower_Cvac + upper_Cvac
-    if np.any(t):
-        first_h, first_eps = _layerspec(above)[0]
-        if np.any(first_h < t):
-            raise ValueError("Conductor thicknesses larger than the first"
-                             " dielectric layer are not currently supported.")
-        Cppc = 2 * eps_0 * t / (b - a)
-        Cvac += Cppc
-        C += first_eps * Cppc
     return C, Cvac
+
+def _tcorr_Gupta_Delta(a, b, t):
+    # Microstrip Lines and Slotlines (Kuldip Gupta et al., 1996 Artech House)
+    # Make sure t has the same shape as a.
+    t = np.ones_like(a) * t
+    good_t = t != 0
+    arg = np.divide(8 * np.pi * a, t,
+                    where=good_t,
+                    out=np.ones_like(t))
+    return 1.25 * t / np.pi * (1 + np.log(arg))
+
+def _tcorr_Gupta_epseff(a, b, t, epseff):
+    m = (a / b)**2
+    ratio = 0.7 * t / (b - a)
+    return epseff - (epseff - 1) * ratio / (ellipk(m) / ellipk(1 - m) + ratio)
+
+def _tcorr_Gupta_capacitance(a, b, below, above, t):
+    C_raw, Cvac_raw = _tcorr_none_capacitance(a, b, below, above)
+    a_raw, b_raw = a, b
+    halfDelta = _tcorr_Gupta_Delta(a, b, t) / 2
+    a = a + halfDelta
+    b = b - halfDelta
+    C, Cvac = _tcorr_none_capacitance(a, b, below, above)
+    epseff = _tcorr_Gupta_epseff(a_raw, b_raw, t, C_raw / Cvac_raw)
+    C = epseff * Cvac
+    return C, Cvac
+
+def _tcorr_Garg_Delta(a, b, t):
+    # Microstrip Lines and Slotlines (Ramesh Garg et al., 2013 Artech House)
+    # Garg cites ashesh2007 (see below) but writes '53' in the second fitting
+    # parameter has instead of '35'. This is probably a typo, but an
+    # inconsequential one.
+    # Make sure t has the same shape as a.
+    t = np.ones_like(a) * t
+    good_t = t != 0
+    arg1 = np.divide(b, t, where=good_t, out=np.zeros_like(t))
+    arg2 = np.divide(4 * np.pi * (b - a), t, where=good_t, out=np.ones_like(t))
+    Delta = t / np.pi * (4.098 + (0.9536 + 3.864e-3 * arg1) * np.log(arg2))
+    # Make sure Delta is an array so the following assigment also works with scalars.
+    Delta = np.asarray(Delta)
+    Delta[~good_t] = np.inf
+    return Delta
+
+def _tcorr_Garg_capacitance_aux(a, b, below, above, halfDelta):
+    # Use the effective a, b only for the upper half.
+    lower_C, lower_Cvac = _capacitance_aux(a, b, *zip(*_layerspec(below)))
+    a = a + halfDelta
+    b = b - halfDelta
+    upper_C, upper_Cvac = _capacitance_aux(a, b, *zip(*_layerspec(above)))
+    C = lower_C + upper_C
+    Cvac = lower_Cvac + upper_Cvac
+    return C, Cvac
+
+def _tcorr_Garg_capacitance(a, b, below, above, t):
+    return _tcorr_Garg_capacitance_aux(a, b, below, above, _tcorr_Garg_Delta(a, b, t) / 2)
+
+def _tcorr_Ashesh_Delta(a, b, t):
+    # Analysis and Design of Symmetric Coplanar Lines with Thick Conductors
+    # (C. B. Ashesh, 2007, PhD thesis, Indian Institute of Technology, Kharagpur)
+    good_t = t != 0
+    arg1 = np.divide(b, t, where=good_t, out=np.zeros_like(t))
+    arg2 = np.divide(4 * np.pi * (b - a), t, where=good_t, out=np.ones_like(t))
+    Delta = t / np.pi * (4.098 + (0.9356 + 3.864e-3 * arg1) * np.log(arg2))
+    # Make sure Delta is an array so the following assigment also works with scalars.
+    Delta = np.asarray(Delta)
+    Delta[~good_t] = np.inf
+    return Delta
+
+def _tcorr_Ashesh_capacitance(a, b, below, above, t):
+    return _tcorr_Garg_capacitance_aux(a, b, below, above, _tcorr_Ashesh_Delta(a, b, t) / 2)
+
+def _tcorr_ppc_C_aux(a, b, t, Cfun, epsr_above):
+    lmbd = t / (b - a)
+    Cvac = 2 * Cfun(lmbd)
+    C = epsr_above * Cvac
+    return C, Cvac
+
+def _tcorr_ppc_C(a, b, above, t):
+    first_h, first_epsr = _layerspec(above)[0]
+    if np.any(first_h < t):
+        raise ValueError("Conductor thicknesses larger than the first"
+                         " dielectric layer are not currently supported.")
+    return _tcorr_ppc_C_aux(a, b, t, _ppc_C, first_epsr)
+
+def _tcorr_ppc_capacitance_aux(a, b, below, above, ppc_C, ppc_Cvac):
+    lower_C, lower_Cvac = _capacitance_aux(a, b, *zip(*_layerspec(below)))
+    upper_C, upper_Cvac = _capacitance_aux(a, b, *zip(*_layerspec(above)))
+    C = lower_C + upper_C + ppc_C
+    Cvac = lower_Cvac + upper_Cvac + ppc_Cvac
+    return C, Cvac
+
+def _tcorr_ppc_capacitance(a, b, below, above, t):
+    return _tcorr_ppc_capacitance_aux(a, b, below, above,
+                                      *_tcorr_ppc_C(a, b, above, t))
+
+def _tcorr_ppcedge_C_aux(a, b, t, Cfun, epsr_below, epsr_above):
+    lmbd = t / (b - a)
+    Cvac = 2 * Cfun(lmbd)
+    Cvac_ppc = 2 * _ppc_C(lmbd)
+    single_edge_contribution = (Cvac - Cvac_ppc) / 2
+    C = epsr_above * Cvac + (epsr_below - epsr_above) * single_edge_contribution
+    return C, Cvac
+
+def _tcorr_ppcedge_C(a, b, below, above, t):
+    first_h_below, first_epsr_below = _layerspec(below)[0]
+    if np.any(first_h_below < 2 * (b - a)):
+        raise ValueError("Substrate thicknesses smaller than twice the gap size"
+                         " are not currently supported.")
+    first_h_above, first_epsr_above = _layerspec(above)[0]
+    if np.any(first_h_above < t + 2 * (b - a)):
+        raise ValueError("Conductor thicknesses larger than the first"
+                         " dielectric layer minus twice the gap size"
+                         " are not currently supported.")
+    return _tcorr_ppcedge_C_aux(a, b, t, _ppcedge_C, first_epsr_below, first_epsr_above)
+
+def _tcorr_ppcedge_capacitance(a, b, below, above, t):
+    return _tcorr_ppc_capacitance_aux(a, b, below, above,
+                                      *_tcorr_ppcedge_C(a, b, below, above, t))
+
+def _tcorr_Cohn_C(a, b, below, above, t):
+    first_h_below, first_epsr_below = _layerspec(below)[0]
+    if np.any(first_h_below < 2 * (b - a)):
+        raise ValueError("Substrate thicknesses smaller than twice the gap size"
+                         " are not currently supported.")
+    first_h_above, first_epsr_above = _layerspec(above)[0]
+    if np.any(first_h_above < t + 2 * (b - a)):
+        raise ValueError("Conductor thicknesses larger than the first"
+                         " dielectric layer minus twice the gap size"
+                         " are not currently supported.")
+    return _tcorr_ppcedge_C_aux(a, b, t, _Cohn_C, first_epsr_below, first_epsr_above)
+
+def _tcorr_Cohn_capacitance(a, b, below, above, t):
+    return _tcorr_ppc_capacitance_aux(a, b, below, above,
+                                      *_tcorr_Cohn_C(a, b, below, above, t))
+
+def _capacitance(a: ArrayLike, b: ArrayLike,
+                 below: LayerSpec = None,
+                 above: LayerSpec = None,
+                 t: ArrayLike = 0) -> Union[float, np.array]:
+    # Make sure everything's an array.
+    a = np.asarray(a)
+    b = np.asarray(b)
+    t = np.asarray(t)
+    # Now do the calculation.
+    if np.any(t):
+        if thickness_correction_method == 'Gupta':
+            _capfun = _tcorr_Gupta_capacitance
+        elif thickness_correction_method == 'Garg':
+            _capfun = _tcorr_Garg_capacitance
+        elif thickness_correction_method == 'Ashesh':
+            _capfun = _tcorr_Ashesh_capacitance
+        elif thickness_correction_method == 'ppc':
+            _capfun = _tcorr_ppc_capacitance
+        elif thickness_correction_method == 'ppcedge':
+            _capfun = _tcorr_ppcedge_capacitance
+        elif thickness_correction_method == 'Cohn':
+            _capfun = _tcorr_Cohn_capacitance
+        else:
+            raise ValueError(f"Unknown t correction method {thickness_correction_method!r}.")
+        return _capfun(a, b, below, above, t)
+    else:
+        return _tcorr_none_capacitance(a, b, below, above)
 
 def capacitance(a: ArrayLike, b: ArrayLike,
                 below: LayerSpec = None,
