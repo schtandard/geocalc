@@ -47,7 +47,7 @@ from scipy.constants import epsilon_0 as eps_0
 
 
 __all__ = ['ab2SW', 'SW2ab',
-           'capacitance_0', 'Z_0_air', 'Z_0']
+           'C_0', 'Z_0_air', 'Z_0']
 
 def ab2SW(a, b):
     """Calculate `S` and `W` from `a` and `b`."""
@@ -58,7 +58,7 @@ def SW2ab(S, W):
     a = S / 2
     return a, a + W
 
-def capacitance_0(a, b):
+def C_0(a, b):
     r"""Calculate the capacitance per unit length of the line in the absence of the dielectric substrate
 
     Arguments:
