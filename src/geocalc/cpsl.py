@@ -46,7 +46,7 @@ from scipy.special import ellipk
 from scipy.constants import epsilon_0 as eps_0
 
 
-__all__ = ['ab2SW', 'SW2ab', 'DW2ab', 'dW2ab',
+__all__ = ['ab2SW', 'SW2ab',
            'capacitance_0', 'Z_0_air', 'Z_0']
 
 def ab2SW(a, b):
@@ -57,14 +57,6 @@ def SW2ab(S, W):
     """Calculate `a` and `b` from `S` and `W`."""
     a = S / 2
     return a, a + W
-
-def DW2ab(D, W):
-    """Calculate `a` and `b` from `D` and `W`."""
-    return (D - W) / 2, (D + W) / 2
-
-def dW2ab(d, W):
-    """Calculate `a` and `b` from `d` and `W`."""
-    return d - W / 2, d + W / 2
 
 def capacitance_0(a, b):
     r"""Calculate the capacitance per unit length of the line in the absence of the dielectric substrate
