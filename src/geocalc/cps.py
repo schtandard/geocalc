@@ -1,4 +1,4 @@
-"""Utilities for coplanar stripline (CPSL) geometries.
+"""Utilities for coplanar stripline (CPS) geometries with infinite ground plane on a dielectric substrate of finite thickness.
 
 The functions in this module accept floats or numpy arrays of equal shape for
 geometry parameters and return an object (or objects) of the same type and shape.
@@ -18,7 +18,7 @@ The meanings of the geometry parameter names are shown in this drawing (crossect
                        ├── W ──┤
 
            ┌───────────────────────────────────────┐  ┬
-           │             substrate                    │ h
+           │             substrate                 │  │ h
            └───────────────────────────────────────┘  ┴
 
 
@@ -47,7 +47,7 @@ from scipy.constants import epsilon_0 as eps_0
 
 
 __all__ = ['ab2SW', 'SW2ab',
-           'C_0', 'Z_0_air', 'Z_0']
+           'capacitance', 'impedance']
 
 def ab2SW(a, b):
     """Calculate `S` and `W` from `a` and `b`."""
@@ -70,7 +70,7 @@ def m_prime(m):
     """Calculate the m_prime (aka k_prime^2) parameter for a given `m` """
     return 1 - m ** 2
 
-def C_0(a, b):
+def capacitance(a, b):
     r"""Calculate the capacitance per unit length of the line in the absence of the dielectric substrate
 
     Arguments:
@@ -105,7 +105,7 @@ def epsilon_eff(a, b, h, eps_r):
     """
     return 1 + ((eps_r - 1) / 2) * (ellipk(m_3(a,b)) / ellipk(m_prime(m_3(a,b)))) * (ellipk(m_prime(m_4(a,b))) / ellipk(m_4(a,b)))
 
-def Z_0(a, b, h, eps_r):
+def impedance(a, b, h, eps_r):
     r"""Calculate the characteristic impedance
 
     Arguments:
