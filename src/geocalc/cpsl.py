@@ -58,6 +58,18 @@ def SW2ab(S, W):
     a = S / 2
     return a, a + W
 
+def m_3(a, b):
+    """Calculate the m_3 (aka k_3^2) parameter for `a` and `b`"""
+    return (2 * a) / (a + b)
+
+def m_4(a, b, h):
+    """Calculate the m_4 (aka k_4^2) parameter for `a` and `b`"""
+    return (np.exp((2 * np.pi * a) / h) - 1) / (np.exp((np.pi * (b + a)) / h) - 1)
+
+def m_prime(m):
+    """Calculate the m_prime (aka k_prime^2) parameter for a given `m` """
+    return 1 - m ** 2
+
 def C_0(a, b):
     r"""Calculate the capacitance per unit length of the line in the absence of the dielectric substrate
 
@@ -67,9 +79,7 @@ def C_0(a, b):
     Returns:
         capacitance C_0
     """
-    k_3 = np.sqrt((2 * a) / (a + b))
-    k_3p = np.sqrt(1 - k_3 ** 2)
-    return 2 * eps_0 * ellipk(k_3p) / ellipk(k_3)
+    return 2 * eps_0 * ellipk(m_prime(m_3(a,b))) / ellipk(m_3(a,b))
 
 def Z_0_air(a,b):
     r"""Calculate the characteristic impedance in the absence of the dielectric substrate
@@ -80,9 +90,7 @@ def Z_0_air(a,b):
     Returns:
         capacitance Z_0(air)
     """
-    k_3 = np.sqrt((2 * a) / (a + b))
-    k_3p = np.sqrt(1 - k_3 ** 2)
-    return 60 * np.pi * ellipk(k_3p) / ellipk(k_3)
+    return 60 * np.pi * ellipk(m_prime(m_3(a,b))) / ellipk(m_3(a,b))
 
 def epsilon_eff(a, b, h, eps_r):
     r"""Calculate the effective dielectric constant
@@ -95,13 +103,7 @@ def epsilon_eff(a, b, h, eps_r):
     Returns:
         dielectric constant epsilon_eff
     """
-    k_3 = np.sqrt((2 * a) / (a + b))
-    k_3p = np.sqrt(1 - k_3 ** 2)
-
-    k_4 = np.sqrt((np.exp((2 * np.pi * a) / h) - 1) / (np.exp((np.pi * (b + a)) / h) - 1))
-    k_4p = np.sqrt(1 - k_4 ** 2)
-
-    return 1 + ((eps_r - 1) / 2) * (ellipk(k_3) / ellipk(k_3p)) * (ellipk(k_4p) / ellipk(k_4))
+    return 1 + ((eps_r - 1) / 2) * (ellipk(m_3(a,b)) / ellipk(m_prime(m_3(a,b)))) * (ellipk(m_prime(m_4(a,b))) / ellipk(m_4(a,b)))
 
 def Z_0(a, b, h, eps_r):
     r"""Calculate the characteristic impedance
@@ -114,7 +116,5 @@ def Z_0(a, b, h, eps_r):
     Returns:
         characteristic impedance Z_0
     """
-    k_3 = np.sqrt((2 * a) / (a + b))
-    k_3p = np.sqrt(1 - k_3 ** 2)
     eps_eff = epsilon_eff(a, b, h, eps_r)
-    return ((60 * np.pi) / np.sqrt(eps_eff)) * (ellipk(k_3p) / ellipk(k_3))
+    return ((60 * np.pi) / np.sqrt(eps_eff)) * (ellipk(m_prime(m_3(a,b))) / ellipk(m_3(a,b)))
