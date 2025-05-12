@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- Thickness correction.
+- Experimental: Thickness correction.
+- Experimental: `cps` module.
 
 ### Changed
 

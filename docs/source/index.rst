@@ -10,6 +10,11 @@ geocalc
    The interface may change in incompatible ways between versions, without warning.
    Most of it should be fairly stable but be aware of this possibility and make a note of the exact version you are using for critical applications.
 
+.. warning::
+
+   In particular, the thickness correction functionality in the :mod:`cpw` module and the entire :mod:`cps` module are considered experimental.
+   Their documentation is not very good or complete and they in particular are subject to changes.
+
 Easily calculate the impedance of a given CPW structure
 
 .. code-block:: pycon
