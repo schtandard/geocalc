@@ -31,15 +31,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 - Accept numpy scalars as layer specification.
-- Handle IDC calculation with geometry parameter arrays and non-trivial dielectric layers.
+- Handle IDC calculation with geometry parameter arrays and non-trivial dielectric
+  layers.
 - Improved misleading phrasing in IDC theory.
 
 ## 2024-06-21 - v0.2.3
 
 ### Fixed
 
-- Critical! Wrong factor in IDC capacitance calculation with inifinite dielectric layers.
-  Luckily, the resulting error was small.
+- Critical! Wrong factor in IDC capacitance calculation with inifinite dielectric
+  layers. Luckily, the resulting error was small.
 
 ## 2024-05-15 - v0.2.2
 
@@ -52,9 +53,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
 - Erroneous: Wrong calculation value for CPW layers with infinite thickness.
-  We thought we used m = k as the argument for the elliptic integral there even though it was correct (m = k^2).
-  This was "fixed", introducing a calculation error.
-  In reality, it was only wrong in the documentation.
+  We thought we used m = k as the argument for the elliptic integral there even though
+  it was correct (m = k^2). This was "fixed", introducing a calculation error. In
+  reality, it was only wrong in the documentation.
 - m = k instead of m = k^2 in the theory part of the documentation.
 
 ### Added

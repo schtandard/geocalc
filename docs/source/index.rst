@@ -2,18 +2,20 @@
 geocalc
 =======
 
-`geocalc` is a Python 3 package for calculating physical parameters for device geometries.
+`geocalc` is a Python package for calculating physical parameters from device geometries.
 
 .. warning::
 
-   `geocalc` is currently still in version 0.
-   The interface may change in incompatible ways between versions, without warning.
-   Most of it should be fairly stable but be aware of this possibility and make a note of the exact version you are using for critical applications.
+   `geocalc` is currently still in version 0. The interface may change in incompatible
+   ways between versions, without warning. Most of it should be fairly stable but be
+   aware of this possibility and pin the exact version you are using for critical
+   applications.
 
 .. warning::
 
-   In particular, the thickness correction functionality in the :mod:`cpw` module is considered experimental.
-   Its documentation is not very good or complete and it in particular is subject to changes.
+   In particular, the thickness correction functionality in the :mod:`cpw` module is
+   considered experimental. Its documentation is not very good or complete and it in
+   particular is subject to changes.
 
 Easily calculate the impedance of a given CPW structure
 

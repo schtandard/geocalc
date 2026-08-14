@@ -2,24 +2,33 @@
 The Theory
 ==========
 The calculations performed by the functions in this package will be briefly listed here.
-The reasoning behind the calculations will not be explained in detail but references to literature will be provided.
+The reasoning behind the calculations will not be explained in detail but references to
+literature will be provided.
 
 ------------------------------------------------
 Calculating Capacitances Using Confomal Mappings
 ------------------------------------------------
-The general idea of conformal mappings is to transform geometries in which the field equations cannot easily be solved into ones where the solution is trivial using appropriate coordinate transformations.
-Let us first broadly discuss this useful approach before moving on to the particular device geometries.
+The general idea of conformal mappings is to transform geometries in which the field
+equations cannot easily be solved into ones where the solution is trivial using
+appropriate coordinate transformations. Let us first broadly discuss this useful
+approach before moving on to the particular device geometries.
 
 Field Volumes
 =============
-We consider a planar geometry of conductors that is (practically) invariant in one dimension.
-By that we mean that its extent in that direction is so large that we can consider it to be infinite for the purposes of our calculations.
-We will then use conformal mapping techniques to calculate the specific capacitance of the geometry (i.e. the capacitance per length in the invariant direction).
-For a geometry of finite length (that is still large enough for the approximation to hold), we can the obtain its absolute capacitance by multiplying its specific capacitance with its length.
+We consider a planar geometry of conductors that is (practically) invariant in one
+dimension. By that we mean that its extent in that direction is so large that we can
+consider it to be infinite for the purposes of our calculations. We will then use
+conformal mapping techniques to calculate the specific capacitance of the geometry (i.e.
+the capacitance per length in the invariant direction). For a geometry of finite length
+(that is still large enough for the approximation to hold), we can the obtain its
+absolute capacitance by multiplying its specific capacitance with its length.
 
-Above and below the conductor layer, there may be an arbitrary number of dielectric layers as well as a metal cover above the upper-most and below the lower-most dielectric.
-Let us only consider the upper half of this system for now; the calculations for the lower half are analogous.
-Let :math:`n` be the number of dielectric layers above the conductors, :math:`\varepsilon_k` the relative permittivity of the :math:`k`-th dielectric and :math:`h_k` the :math:`z`-coordinate of its upper edge::
+Above and below the conductor layer, there may be an arbitrary number of dielectric
+layers as well as a metal cover above the upper-most and below the lower-most
+dielectric. Let us only consider the upper half of this system for now; the calculations
+for the lower half are analogous. Let :math:`n` be the number of dielectric layers above
+the conductors, :math:`\varepsilon_k` the relative permittivity of the :math:`k`-th
+dielectric and :math:`h_k` the :math:`z`-coordinate of its upper edge::
 
    ───────────────────────────────────────────────────── h_n
                            eps_n
@@ -33,16 +42,21 @@ Let :math:`n` be the number of dielectric layers above the conductors, :math:`\v
                            eps_1
    ──────    ──────────       ────      ──────────────── 0
 
-Let us call the contribution :math:`C_{\mathrm p}` of a particular region of space to the specific capacitance divided by the permittivity in that region its *field volume* :math:`v := C_{\mathrm p} / \varepsilon`.
-Using conformal mappings appropriate for the conductor geometry, we can calculate the field volume :math:`v(h)` of a dielectric layer extending from the conductor layer (height :math:`0`) up to the height :math:`h`, with or without a metal cover.
-The field volume of a single layer of the dielectric stack is then given by
+Let us call the contribution :math:`C_{\mathrm p}` of a particular region of space to
+the specific capacitance divided by the permittivity in that region its *field volume*
+:math:`v := C_{\mathrm p} / \varepsilon`. Using conformal mappings appropriate for the
+conductor geometry, we can calculate the field volume :math:`v(h)` of a dielectric layer
+extending from the conductor layer (height :math:`0`) up to the height :math:`h`, with
+or without a metal cover. The field volume of a single layer of the dielectric stack is
+then given by
 
 .. math::
 
    v_k = v(h_k) - v(h_{k - 1})
 
-where :math:`h_0 := 0`.
-With this we can calculate the total specific capacitance of the geometry as the sum of the upper (index :math:`\mathrm u`) and lower (index :math:`\mathrm l`) contributions
+where :math:`h_0 := 0`. With this we can calculate the total specific capacitance of the
+geometry as the sum of the upper (index :math:`\mathrm u`) and lower (index
+:math:`\mathrm l`) contributions
 
 .. math::
 
@@ -50,8 +64,9 @@ With this we can calculate the total specific capacitance of the geometry as the
 
 Filling Factors and Effective Permittivity
 ==========================================
-For further considerations (like determining the propagation velocity in a transmission line) the effective permittivity of the system can be useful.
-Each dielectric contributes to it according to a filling factor:
+For further considerations (like determining the propagation velocity in a transmission
+line) the effective permittivity of the system can be useful. Each dielectric
+contributes to it according to a filling factor:
 
 .. math::
 
@@ -59,8 +74,10 @@ Each dielectric contributes to it according to a filling factor:
    := \frac{C}{C_{\mathrm{vac}}}
    = \sum_{k = 0}^{n^{\mathrm u}} f^{\mathrm u}_k \, \varepsilon^{\mathrm u}_k + \sum_{k = 0}^{n^{\mathrm l}} f^{\mathrm l}_k \, \varepsilon^{\mathrm l}_k
 
-where :math:`C` is the total specific capacitance of the geometry and :math:`C_{\mathrm{vac}}` is its specific capacitance if all dielectrics were replaced with vacuum.
-Using its vield volume, the filling factor of any of our dielectric layers is given by
+where :math:`C` is the total specific capacitance of the geometry and
+:math:`C_{\mathrm{vac}}` is its specific capacitance if all dielectrics were replaced
+with vacuum. Using its vield volume, the filling factor of any of our dielectric layers
+is given by
 
 .. math::
 
@@ -75,25 +92,30 @@ Coplanar Waveguides (CPWs)
 --------------------------
 Calculating the Field Volumes
 =============================
-For a coplanar waveguide described by the parameters :math:`a` and :math:`b` the field volume of a dielectric layer extending from the CPW (height :math:`0`) up to the height :math:`h` is given by
+For a coplanar waveguide described by the parameters :math:`a` and :math:`b` the field
+volume of a dielectric layer extending from the CPW (height :math:`0`) up to the height
+:math:`h` is given by
 
 .. math::
 
    v(h) = 2 \cdot \frac{K(m(h))}{K'(m(h))} = 2 \cdot \frac{K(m(h))}{K(1 - m(h))}
 
-where :math:`K(m)` is the complete elliptic integral of the first kind and :math:`K'(m)` is its complement.
-(Note that we are writing :math:`K` in the convention with the parameter :math:`m`, as does :func:`scipy.special.ellipk`.
-Both Simons (2001) and Garg et al. (2013) use the convention with the parameter :math:`k`, where :math:`m = k^2`.)
+where :math:`K(m)` is the complete elliptic integral of the first kind and :math:`K'(m)`
+is its complement. (Note that we are writing :math:`K` in the convention with the
+parameter :math:`m`, as does :func:`scipy.special.ellipk`. Both Simons (2001) and Garg
+et al. (2013) use the convention with the parameter :math:`k`, where :math:`m = k^2`.)
 The parameter :math:`m(h)` is given by
 
 .. math::
 
-   m^{\mathrm{cov}}(h) = \biggl( \frac{\tanh\bigl( \frac{\pi a}{2 h} \bigr)}{\tanh\bigl( \frac{\pi b}{2 h} \bigr)} \biggr)^2
+   m^{\mathrm{cov}}(h) = \biggl( \frac{\tanh\bigl( \frac{\pi a}{2 h} \bigr)}
+                                      {\tanh\bigl( \frac{\pi b}{2 h} \bigr)} \biggr)^2
    \qquad\text{and}\qquad
-   m^{\mathrm{int}}(h) = \biggl( \frac{\sinh\bigl( \frac{\pi a}{2 h} \bigr)}{\sinh\bigl( \frac{\pi b}{2 h} \bigr)} \biggr)^2
+   m^{\mathrm{int}}(h) = \biggl( \frac{\sinh\bigl( \frac{\pi a}{2 h} \bigr)}
+                                      {\sinh\bigl( \frac{\pi b}{2 h} \bigr)} \biggr)^2
 
-for layers with or without a metal cover, respectively (i.e. at an interface between dielectrics or at the edge of the layer stack, respectively).
-Note that
+for layers with or without a metal cover, respectively (i.e. at an interface between
+dielectrics or at the edge of the layer stack, respectively). Note that
 
 .. math::
 
@@ -107,46 +129,57 @@ More details on these calculations can be found in Simons (2001) and Garg et al.
 
 Correcting for the Metallization Thickness
 ==========================================
-The expressions above are derived for an infinitely thin CPW metallization layer.
-When it has a positive thickness, some part of the field will be between the center and ground conductors, inside this layer.
-For small nonzero metallization thicknesses :math:`t` we can approximate the change in capacitance (and thus other values) this leads to by using a reduced, effective gap width :math:`W_{\mathrm{e}} = W - \Delta` (i.e. :math:`a_{\mathrm{e}} = a + \Delta / 2` and :math:`b_{\mathrm{e}} = b - \Delta / 2`) for calculations in the region above the CPW.
-(The metallization layer is assumed to be part of the upper region, so we keep using the original CPW parameters for the lower region.)
-Different sources give varying expressions for :math:`\Delta`:
+The expressions above are derived for an infinitely thin CPW metallization layer. When
+it has a positive thickness, some part of the field will be between the center and
+ground conductors, inside this layer. For small nonzero metallization thicknesses
+:math:`t` we can approximate the change in capacitance (and thus other values) this
+leads to by using a reduced, effective gap width :math:`W_{\mathrm{e}} = W - \Delta`
+(i.e. :math:`a_{\mathrm{e}} = a + \Delta / 2` and :math:`b_{\mathrm{e}} = b - \Delta /
+2`) for calculations in the region above the CPW. (The metallization layer is assumed to
+be part of the upper region, so we keep using the original CPW parameters for the lower
+region.) Different sources give varying expressions for :math:`\Delta`:
 
 - Microstrip Lines and Slotlines  (Kuldip Gupta et al., 1996 Artech House)
 
   .. math::
 
-     \Delta = \frac{1.25 \, t}{\pi} \, \biggl( 1 + \ln\Bigl( \frac{4 \pi S}{t} \Bigr) \biggr)
+     \Delta = \frac{1.25 \, t}{\pi} \,
+                \biggl( 1 + \ln\Bigl( \frac{4 \pi S}{t} \Bigr) \biggr)
 
 - Microstrip Lines and Slotlines (Ramesh Garg et al., 2013 Artech House)
 
   .. math::
 
-     \Delta = \frac{t}{\pi} \biggl( 4.089 + \Bigl( 0.9536 + 3.864 \cdot 10^{-3} \, \frac{b}{t} \Bigr) \ln\Bigl( \frac{4 \pi W}{t} \Bigr) \biggr)
+     \Delta = \frac{t}{\pi}
+       \biggl( 4.089 + \Bigl( 0.9536 + 3.864 \cdot 10^{-3} \, \frac{b}{t} \Bigr)
+                         \ln\Bigl( \frac{4 \pi W}{t} \Bigr) \biggr)
 
 - Analysis and Design of Symmetric Coplanar Lines with Thick Conductors (C. B. Ashesh, 2007, PhD thesis, Indian Institute of Technology, Kharagpur)
 
   .. math::
 
-     \Delta = \frac{t}{\pi} \biggl( 4.089 + \Bigl( 0.9356 + 3.864 \cdot 10^{-3} \, \frac{b}{t} \Bigr) \ln\Bigl( \frac{4 \pi W}{t} \Bigr) \biggr)
+     \Delta = \frac{t}{\pi}
+       \biggl( 4.089 + \Bigl( 0.9356 + 3.864 \cdot 10^{-3} \, \frac{b}{t} \Bigr)
+                         \ln\Bigl( \frac{4 \pi W}{t} \Bigr) \biggr)
 
-Garg cites Ashesh but writes :math:`53` instead of :math:`35` in the second fitting parameter.
-This is probably a typo, and an incosequential one.
-Also note:
+Garg cites Ashesh but writes :math:`53` instead of :math:`35` in the second fitting
+parameter. This is probably a typo, and an incosequential one. Also note:
 
-- These corrections are only valid for small values of :math:`t`.
-  Values on the order of :math:`W / 10` should still give reasonably good results, larger values may result in considerable inaccuracies.
-- The expression given by Garg/Ashesh diverges for :math:`t \to 0`, so it can't be used for very small values.
-  A guideline of :math:`t > b / 500` is given.
-- All of these corrections are only discussed in the context of CPW with one infinitely thick substrate below and nothing above.
-  I do expect them to also perform reasonably well for more complicated layer stacks, though.
+- These corrections are only valid for small values of :math:`t`. Values on the order of
+  :math:`W / 10` should still give reasonably good results, larger values may result in
+  considerable inaccuracies.
+- The expression given by Garg/Ashesh diverges for :math:`t \to 0`, so it can't be used
+  for very small values. A guideline of :math:`t > b / 500` is given.
+- All of these corrections are only discussed in the context of CPW with one infinitely
+  thick substrate below and nothing above. I do expect them to also perform reasonably
+  well for more complicated layer stacks, though.
 
 Further Parameters
 ==================
 Lossless CPWs
 -------------
-For a lossless CPW (:math:`G = 0` and :math:`R = 0` in the transmission line model) one finds wave solutions with
+For a lossless CPW (:math:`G = 0` and :math:`R = 0` in the transmission line model) one
+finds wave solutions with
 
 .. math::
 
@@ -158,13 +191,20 @@ It can be shown that the phase velocity in the transmission line is given by
 
 .. math::
 
-   v_{\mathrm{ph}} = \frac{\mathrm i \omega}{\gamma} = \frac{1}{\sqrt{L C}} = \frac{c}{\sqrt{\varepsilon_{\mathrm{eff}}}}
+   v_{\mathrm{ph}}
+   = \frac{\mathrm i \omega}{\gamma}
+   = \frac{1}{\sqrt{L C}}
+   = \frac{c}{\sqrt{\varepsilon_{\mathrm{eff}}}}
 
 allowing us to calculate the line's characteristic impedance via
 
 .. math::
 
-   Z_0 = \sqrt{\frac{L}{C}} = \frac{\gamma}{\mathrm i \omega C} = \frac{1}{C v_{\mathrm{ph}}} = \frac{\sqrt{\varepsilon_{\mathrm{eff}}}}{C c}
+   Z_0
+   = \sqrt{\frac{L}{C}}
+   = \frac{\gamma}{\mathrm i \omega C}
+   = \frac{1}{C v_{\mathrm{ph}}}
+   = \frac{\sqrt{\varepsilon_{\mathrm{eff}}}}{C c}
 
 where :math:`c` is the speed of light in vacuum.
 Finally, we can calculate :math:`L` if desired:
@@ -209,11 +249,13 @@ Then the expressions above change as follows (in first order approximation):
    \approx \sqrt{\frac LC}
    = \frac{\sqrt{\varepsilon_{\mathrm{eff}}}}{C c}
 
-Thus, all of the expressions from the lossless case retain their validity within this approximation, except that the imaginary part of :math:`Z_0` is neglected.
+Thus, all of the expressions from the lossless case retain their validity within this
+approximation, except that the imaginary part of :math:`Z_0` is neglected.
 
 Dielectric Losses
 -----------------
-Similarly to the previous case, the expressions from the lossless case retain their validity in first order approximation, given
+Similarly to the previous case, the expressions from the lossless case retain their
+validity in first order approximation, given
 
 .. math::
 
@@ -223,38 +265,53 @@ Similarly to the previous case, the expressions from the lossless case retain th
    \qquad,\qquad
    \frac{G}{\omega C} \ll 1 .
 
-In this case, :math:`\gamma` can be obtained exactly by calculating :math:`v_{\mathrm{ph}} = c / \sqrt{\varepsilon_{\mathrm{eff}}}` with an appropriate imaginary component in :math:`\varepsilon_{\mathrm{eff}}`.
+In this case, :math:`\gamma` can be obtained exactly by calculating
+:math:`v_{\mathrm{ph}} = c / \sqrt{\varepsilon_{\mathrm{eff}}}` with an appropriate
+imaginary component in :math:`\varepsilon_{\mathrm{eff}}`.
 
 ------------------------------
 Inderdigital Capacitors (IDCs)
 ------------------------------
 The Approach
 ============
-For an interdigital capacitor described by the parameters :math:`n`, :math:`\eta` and :math:`\lambda` we calculate the contributions :math:`C_{\mathrm i}` of a half gap next to an interior electrodes and :math:`C_{\mathrm e}` of a half gap next to an exterior electrode separately.
-A "half gap" refers to the region between the center of an electrode and the center of an adjacent gap, so that the capacitance between two inner electrodes is modeled as two :math:`C_{\mathrm i}` in series and the capacitance between an inner and an outer electrode is modeled as a :math:`C_{\mathrm i}` and a :math:`C_{\mathrm e}` in series.
-The total specific capacitance is then given by
+For an interdigital capacitor described by the parameters :math:`n`, :math:`\eta` and
+:math:`\lambda` we calculate the contributions :math:`C_{\mathrm i}` of a half gap next
+to an interior electrodes and :math:`C_{\mathrm e}` of a half gap next to an exterior
+electrode separately. A "half gap" refers to the region between the center of an
+electrode and the center of an adjacent gap, so that the capacitance between two inner
+electrodes is modeled as two :math:`C_{\mathrm i}` in series and the capacitance between
+an inner and an outer electrode is modeled as a :math:`C_{\mathrm i}` and a
+:math:`C_{\mathrm e}` in series. The total specific capacitance is then given by
 
 .. math::
 
-   C = \frac{n - 3}{2} \, C_{\mathrm i} + 2 \, \frac{C_{\mathrm i} C_{\mathrm e}}{C_{\mathrm i} + C_{\mathrm e}}
+   C = \frac{n - 3}{2} \, C_{\mathrm i}
+         + 2 \, \frac{C_{\mathrm i} C_{\mathrm e}}{C_{\mathrm i} + C_{\mathrm e}}
 
-and the absolute capacitance is obtained as :math:`C_{\mathrm{abs}} = l \cdot C` with the IDC finger length :math:`l`.
+and the absolute capacitance is obtained as :math:`C_{\mathrm{abs}} = l \cdot C` with
+the IDC finger length :math:`l`.
 
-While it is possible to calculate the capacitance for IDC structures with a metal cover using conformal mapping techniques similar to those used for CPW structures, Igreja (2004) does not do this and it is thus not included in this package.
-The following expressions are thus only valid for dielectric layers *without* a metal cover.
-In practice, this will hardly be of relevance, as the distance of a metal cover to the IDC will be much larger than the gap between the fingers (or even the IDC size), making its effects negligible.
+While it is possible to calculate the capacitance for IDC structures with a metal cover
+using conformal mapping techniques similar to those used for CPW structures,
+Igreja (2004) does not do this and it is thus not included in this package. The
+following expressions are thus only valid for dielectric layers *without* a metal cover.
+In practice, this will hardly be of relevance, as the distance of a metal cover to the
+IDC will be much larger than the gap between the fingers (or even the IDC size), making
+its effects negligible.
 
 Calculating the Field Volumes
 =============================
-The field volume of a dielectric layer extending from the CPW (height :math:`0`) up to the height :math:`h` corresponding to one of those gaps is given by
+The field volume of a dielectric layer extending from the CPW (height :math:`0`) up to
+the height :math:`h` corresponding to one of those gaps is given by
 
 .. math::
 
    v(h) = \frac{K(m(h))}{K'(m(h))} = \frac{K(m(h))}{K(1 - m(h))}
 
-where :math:`K(m)` is the complete elliptic integral of the first kind and :math:`K'(m)` is its complement.
-(Note that we are writing :math:`K` in the convention with the parameter :math:`m`, as does :func:`scipy.special.ellipk`.
-Igreja (2004) uses the convention with the parameter :math:`k`, where :math:`m = k^2`.)
+where :math:`K(m)` is the complete elliptic integral of the first kind and :math:`K'(m)`
+is its complement. (Note that we are writing :math:`K` in the convention with the
+parameter :math:`m`, as does :func:`scipy.special.ellipk`. Igreja (2004) uses the
+convention with the parameter :math:`k`, where :math:`m = k^2`.)
 
 For interior electrodes :math:`m(h)` is given by
 
@@ -276,8 +333,10 @@ where
    \quad,\quad
    q = \exp\Bigl(- \frac{4 \pi h}{\lambda}\Bigr)
 
-with the elliptic sine (Jacobi elliptic function *sinus amplitudinis*) :math:`\operatorname{sn}` and the Jacobi theta functions :math:`\vartheta_i`.
-As for :math:`K` we use the :math:`m`-convention for :math:`\operatorname{sn}`, as does :func:`scipy.special.ellipj`, whereas Igreja (2004) uses the :math:`k`-convention.
+with the elliptic sine (Jacobi elliptic function *sinus amplitudinis*)
+:math:`\operatorname{sn}` and the Jacobi theta functions :math:`\vartheta_i`. As for
+:math:`K` we use the :math:`m`-convention for :math:`\operatorname{sn}`, as does
+:func:`scipy.special.ellipj`, whereas Igreja (2004) uses the :math:`k`-convention.
 
 For exterior electrodes one finds
 
@@ -300,6 +359,10 @@ More details on these calculations can be found in Igreja (2004).
 ----------
 References
 ----------
-- Garg, R., Bahl, I., & Bozzi, M. (2013) *Microstrip Lines and Slotlines* (3rd ed.). Artech House.
-- Igreja, R., Dias, C. J. (2004) Analytical evaluation of the interdigital electrodes capacitance for a multi-layered structure. *Sensors and Actuators A: Physical 112*, 291--301.
-- Simons, R. N. (2001). *Coplanar Waveguide Circuits, Components, and Systems.* John Wiley & Sons.
+- Garg, R., Bahl, I., & Bozzi, M. (2013) *Microstrip Lines and Slotlines* (3rd ed.).
+  Artech House.
+- Igreja, R., Dias, C. J. (2004) Analytical evaluation of the interdigital electrodes
+  capacitance for a multi-layered structure. *Sensors and Actuators A: Physical 112*,
+  291--301.
+- Simons, R. N. (2001). *Coplanar Waveguide Circuits, Components, and Systems.*
+  John Wiley & Sons.
