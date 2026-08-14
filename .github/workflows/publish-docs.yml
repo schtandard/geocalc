@@ -24,6 +24,8 @@ jobs:
         uses: actions/checkout@v7
       - name: setup Python
         uses: actions/setup-python@v7
+        with:
+          python-version: '3.8'
       - name: install dependencies
         run: python -m pip install --editable '.[doc]'
       - name: build Sphinx docs
