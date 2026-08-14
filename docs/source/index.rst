@@ -13,7 +13,7 @@ geocalc
 .. warning::
 
    In particular, the thickness correction functionality in the :mod:`cpw` module is considered experimental.
-   Their documentation is not very good or complete and they in particular are subject to changes.
+   Its documentation is not very good or complete and it in particular is subject to changes.
 
 Easily calculate the impedance of a given CPW structure
 
