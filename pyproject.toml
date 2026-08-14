@@ -12,7 +12,7 @@ description = "Calculating physical parameters for device geometries"
 readme = "readme.md"
 requires-python = ">=3.8"
 authors = [
-    {name = "Benedikt Wilde", email = "benedikt.wilde@uni-tuebingen.de"}
+    {name = "Benedikt Wilde", email = "bwilde@posteo.de"}
 ]
 classifiers = [
     "Operating System :: OS Independent",
