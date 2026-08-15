@@ -12,13 +12,13 @@ description = "Calculating physical parameters from device geometry"
 readme = "readme.md"
 license = "GPL-3.0-or-later"
 license-files = ["license"]
-requires-python = ">=3.8"
+requires-python = ">=3.12"
 authors = [
     {name = "Benedikt Wilde", email = "bwilde@posteo.de"}
 ]
 classifiers = [
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.12",
 ]
 dependencies = [
     "numpy",
