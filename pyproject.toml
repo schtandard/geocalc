@@ -10,6 +10,8 @@ build-backend = "setuptools.build_meta"
 name = "geocalc"
 description = "Calculating physical parameters from device geometry"
 readme = "readme.md"
+license = "GPL-3.0-or-later"
+license-files = ["license"]
 requires-python = ">=3.8"
 authors = [
     {name = "Benedikt Wilde", email = "bwilde@posteo.de"}
