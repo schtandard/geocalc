@@ -5,9 +5,9 @@ The calculations performed by the functions in this package will be briefly list
 The reasoning behind the calculations will not be explained in detail but references to
 literature will be provided.
 
-------------------------------------------------
-Calculating Capacitances Using Confomal Mappings
-------------------------------------------------
+-------------------------------------------------
+Calculating Capacitances Using Conformal Mappings
+-------------------------------------------------
 The general idea of conformal mappings is to transform geometries in which the field
 equations cannot easily be solved into ones where the solution is trivial using
 appropriate coordinate transformations. Let us first broadly discuss this useful
@@ -163,7 +163,7 @@ region.) Different sources give varying expressions for :math:`\Delta`:
                          \ln\Bigl( \frac{4 \pi W}{t} \Bigr) \biggr)
 
 Garg cites Ashesh but writes :math:`53` instead of :math:`35` in the second fitting
-parameter. This is probably a typo, and an incosequential one. Also note:
+parameter. This is probably a typo, and an inconsequential one. Also note:
 
 - These corrections are only valid for small values of :math:`t`. Values on the order of
   :math:`W / 10` should still give reasonably good results, larger values may result in
@@ -270,7 +270,7 @@ In this case, :math:`\gamma` can be obtained exactly by calculating
 imaginary component in :math:`\varepsilon_{\mathrm{eff}}`.
 
 ------------------------------
-Inderdigital Capacitors (IDCs)
+Interdigital Capacitors (IDCs)
 ------------------------------
 The Approach
 ============
