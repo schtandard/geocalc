@@ -60,7 +60,10 @@ geometry as the sum of the upper (index :math:`\mathrm u`) and lower (index
 
 .. math::
 
-   C = \varepsilon_0 \, \Bigl( \sum_{k = 0}^{n^{\mathrm u}} v^{\mathrm u}_k \, \varepsilon^{\mathrm u}_k + \sum_{k = 0}^{n^{\mathrm l}} v^{\mathrm l}_k \, \varepsilon^{\mathrm l}_k \Bigr) \text{.}
+   C = \varepsilon_0 \, \Bigl(
+     \sum_{k = 0}^{n^{\mathrm u}} v^{\mathrm u}_k \, \varepsilon^{\mathrm u}_k
+     + \sum_{k = 0}^{n^{\mathrm l}} v^{\mathrm l}_k \, \varepsilon^{\mathrm l}_k
+     \Bigr) .
 
 Filling Factors and Effective Permittivity
 ==========================================
@@ -72,7 +75,8 @@ contributes to it according to a filling factor:
 
    \varepsilon_{\mathrm{eff}}
    := \frac{C}{C_{\mathrm{vac}}}
-   = \sum_{k = 0}^{n^{\mathrm u}} f^{\mathrm u}_k \, \varepsilon^{\mathrm u}_k + \sum_{k = 0}^{n^{\mathrm l}} f^{\mathrm l}_k \, \varepsilon^{\mathrm l}_k
+   = \sum_{k = 0}^{n^{\mathrm u}} f^{\mathrm u}_k \, \varepsilon^{\mathrm u}_k
+     + \sum_{k = 0}^{n^{\mathrm l}} f^{\mathrm l}_k \, \varepsilon^{\mathrm l}_k
 
 where :math:`C` is the total specific capacitance of the geometry and
 :math:`C_{\mathrm{vac}}` is its specific capacitance if all dielectrics were replaced
@@ -83,8 +87,10 @@ is given by
 
    f_k = \frac{v_k}{v_{\mathrm{tot}}}
    \qquad\text{where}\qquad
-   v_{\mathrm{tot}} = v(h^{\mathrm u}_{n^{\mathrm u}}) + v(h^{\mathrm l}_{n^{\mathrm l}})
-   = \sum_{k = 0}^{n^{\mathrm u}} v^{\mathrm u}_k + \sum_{k = 0}^{n^{\mathrm l}} v^{\mathrm l}_k .
+   v_{\mathrm{tot}}
+   = v(h^{\mathrm u}_{n^{\mathrm u}}) + v(h^{\mathrm l}_{n^{\mathrm l}})
+   = \sum_{k = 0}^{n^{\mathrm u}} v^{\mathrm u}_k
+     + \sum_{k = 0}^{n^{\mathrm l}} v^{\mathrm l}_k .
 
 
 --------------------------
@@ -134,10 +140,11 @@ it has a positive thickness, some part of the field will be between the center a
 ground conductors, inside this layer. For small nonzero metallization thicknesses
 :math:`t` we can approximate the change in capacitance (and thus other values) this
 leads to by using a reduced, effective gap width :math:`W_{\mathrm{e}} = W - \Delta`
-(i.e. :math:`a_{\mathrm{e}} = a + \Delta / 2` and :math:`b_{\mathrm{e}} = b - \Delta /
-2`) for calculations in the region above the CPW. (The metallization layer is assumed to
-be part of the upper region, so we keep using the original CPW parameters for the lower
-region.) Different sources give varying expressions for :math:`\Delta`:
+(i.e. :math:`a_{\mathrm{e}} = a + \Delta / 2` and
+:math:`b_{\mathrm{e}} = b - \Delta / 2`) for calculations in the region above the CPW.
+(The metallization layer is assumed to be part of the upper region, so we keep using the
+original CPW parameters for the lower region.) Different sources give varying
+expressions for :math:`\Delta`:
 
 - Microstrip Lines and Slotlines  (Kuldip Gupta et al., 1996 Artech House)
 
@@ -154,7 +161,8 @@ region.) Different sources give varying expressions for :math:`\Delta`:
        \biggl( 4.089 + \Bigl( 0.9536 + 3.864 \cdot 10^{-3} \, \frac{b}{t} \Bigr)
                          \ln\Bigl( \frac{4 \pi W}{t} \Bigr) \biggr)
 
-- Analysis and Design of Symmetric Coplanar Lines with Thick Conductors (C. B. Ashesh, 2007, PhD thesis, Indian Institute of Technology, Kharagpur)
+- Analysis and Design of Symmetric Coplanar Lines with Thick Conductors
+  (C. B. Ashesh, 2007, PhD thesis, Indian Institute of Technology, Kharagpur)
 
   .. math::
 
