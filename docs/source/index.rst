@@ -2,7 +2,7 @@
 geocalc
 =======
 
-`geocalc` is a Python package for calculating physical parameters from device geometries.
+`geocalc` is a Python package for calculating physical parameters from device geometry.
 
 .. warning::
 
