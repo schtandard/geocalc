@@ -120,8 +120,8 @@ The parameter :math:`m(h)` is given by
    m^{\mathrm{int}}(h) = \biggl( \frac{\sinh\bigl( \frac{\pi a}{2 h} \bigr)}
                                       {\sinh\bigl( \frac{\pi b}{2 h} \bigr)} \biggr)^2
 
-for layers with or without a metal cover, respectively (i.e. at an interface between
-dielectrics or at the edge of the layer stack, respectively). Note that
+for layers with or without a metal cover, respectively (i.e. at the edge of the layer
+stack or at an interface between dielectrics, respectively). Note that
 
 .. math::
 
